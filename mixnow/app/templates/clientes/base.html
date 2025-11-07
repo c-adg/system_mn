@@ -13,7 +13,7 @@
 </head>
 <body>
 
-{% if user.is_superuser %}
+{% if user.is_authenticated and user.is_superuser %}
 <!-- Barra de navegación superior -->
 <nav class="top-nav">
     <div class="nav-wrapper">
