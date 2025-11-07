@@ -1,0 +1,114 @@
+<div class="cotizacion-aridos" style="background: #fff; color: #111; font-family: 'Poppins', sans-serif; padding: 2rem; max-width: 900px; margin: 2rem auto; border-radius: 1rem; box-shadow: 0 0 1rem #ccc;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <img src="https://res.cloudinary.com/dbn15ujjz/image/upload/v1760024789/logoaridos_rojd4b.jpg" alt="Logo Aridos" style="width:10rem;">
+        <div style="text-align: right;">
+            <div style="font-weight: 700; font-size: 1.1rem;">ARIDOS ALIANZA ARICA</div>
+            <div>RUT 77.328.027-4</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 1.5rem; text-align: right; font-size: 1rem;">
+        Arica, {{ cotizacion.fecha|date:'d-m-Y' }}
+    </div>
+
+    <h2 style="text-align: center; margin: 2rem 0 1rem 0; font-size: 1.3rem; font-weight: 700;">
+        COTIZACIÓN DE SERVICIO N° {{ cotizacion.numero_cotizacion }}
+    </h2>
+
+    <div style="font-size: 1.1rem; margin-bottom: 1rem;">EMPRESA: {{ cliente.cliente|upper }}</div>
+    <div style="margin-bottom: 1.5rem;">
+        Estimados Señores:<br>En atención a su solicitud adjuntamos la siguiente cotización
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
+        <thead>
+            <tr style="background: #111; color: #fff;">
+                <th style="padding: 0.5rem; border: 1px solid #111;">ITEM</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">DESCRIPCION</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">M3</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">PU</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">SUBTOTAL</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">IVA</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ forloop.counter }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.descripcion }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.cantidad_m3 }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.precio_unitario|floatformat:0}} {{ item.get_moneda_display }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.subtotal|floatformat:0 }} {{ item.get_moneda_display }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.iva|floatformat:0 }} {{ item.get_moneda_display }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.total|floatformat:0 }} {{ item.get_moneda_display }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" style="text-align:center;">No hay ítems agregados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+     </table>
+
+                <!-- Totales generales en formato mini tabla -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem;">
+            <tr style="background: #f9f9f9; font-weight: 600; text-align: right;">
+                <td style="padding: 4px 8px; border: 1px solid #ddd; text-align: left;">Subtotal general</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">
+                    {{ cotizacion.subtotal_general|floatformat:0 }} {{ items.0.get_moneda_display }}
+                </td>
+            </tr>
+            <tr style="background: #f9f9f9; font-weight: 600; text-align: right;">
+                <td style="padding: 4px 8px; border: 1px solid #ddd; text-align: left;">IVA TOTAL</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">
+                    {{ cotizacion.iva_total|floatformat:0 }} {{ items.0.get_moneda_display }}
+                </td>
+            </tr>
+            <tr style="background: #efefef; font-weight: 700; text-align: right;">
+                <td style="padding: 4px 8px; border: 1px solid #ddd; text-align: left;">Total general</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">
+                    {{ cotizacion.total_general|floatformat:0 }} {{ items.0.get_moneda_display }}
+                </td>
+            </tr>
+        </table>
+    <ul style="margin-bottom: 1.5rem;">
+        <li>✓ PRECIO + IVA.</li>
+        <li>✓ VALIDO HASTA : {{ cotizacion.valido_hasta }}</li>
+        <li>✓ Cualquier consulta no dude en comunicarse.</li>
+        <li>✓ Banco DE Chile.</li>
+        <li>✓ Cuenta Corriente 1051295402.</li>
+        <li>✓ RUT 77.328.027-4</li>
+    </ul>
+
+    <div style="text-align: center; margin-top: 2rem;">
+    <div style="margin-bottom: 0.5rem;">VALENTINO VENEGAS</div>
+        <div style="margin-bottom: 0.5rem;">ARIDOS ALIANZA ARICA LIMITADA</div>
+        <div style="margin-bottom: 0.5rem;">GIRO: OBRAS EN CONSTRUCCION</div>
+        <div style="margin-bottom: 0.5rem;">TELEFONO: +56977760047</div>
+        <hr style="margin-top: 2rem; border: none; border-top: 1px solid #111;">
+    </div>
+
+   
+</div>
+
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="{% url 'generar_pdf' cotizacion.id 'aridos' %}" 
+            class="btn no-print" 
+            style="padding: 0.5rem 1rem; background-color: #000000ff; color: white; text-decoration: none; border-radius: 0.3rem;">
+            Descargar PDF
+        </a>
+    </div>
+
+<style>
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+.cotizacion-aridos {
+  page-break-inside: avoid;
+}
+
+</style>
+

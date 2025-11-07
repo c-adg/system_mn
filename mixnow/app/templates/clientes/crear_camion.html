@@ -1,0 +1,173 @@
+{% extends "clientes/base.html" %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="card form-card">
+        <div class="card-header">
+            <h2 class="title"><i class="bi bi-truck"></i> Agregar Camión</h2>
+        </div>
+        <div class="card-body">
+            <form id="form-crear" method="post" enctype="multipart/form-data" class="needs-validation">
+                {% csrf_token %}
+
+                <div class="mb-3">{{ form.empresa.label_tag }}{{ form.empresa }}</div>
+                <div class="mb-3">{{ form.vehiculo.label_tag }}{{ form.vehiculo }}</div>
+                <div class="mb-3">{{ form.patente.label_tag }}{{ form.patente }}</div>
+                <div class="mb-3">{{ form.descripcion.label_tag }}{{ form.descripcion }}</div>
+                <div class="mb-3">{{ form.revision_tecnica.label_tag }}{{ form.revision_tecnica }}</div>
+                <div class="mb-3">{{ form.circulacion.label_tag }}{{ form.circulacion }}</div>
+                <div class="mb-3">{{ form.seguro.label_tag }}{{ form.seguro }}</div>
+
+                <!-- Subida de múltiples archivos con botón negro -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <input type="file" name="archivos" id="id_archivos" multiple class="d-none" accept="application/pdf">
+                    </div>
+                    <ul id="lista-archivos" class="list-group mt-3"></ul>
+                </div>
+
+                <!-- Botones -->
+                <div class="form-actions">
+                    <button type="submit" class="btn">Agregar</button>
+                    <a href="{% url 'listar_camiones' %}" class="btn btn-secondary">Volver</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: 80vh;
+    font-family: 'Poppins', sans-serif;
+    background-color: #111;
+}
+
+.card.form-card {
+    background-color: #111;
+    border: 0.125rem solid #fff;
+    border-radius: 0.625rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 31.25rem;
+    box-shadow: 0.25rem 0.25rem #fff;
+    color: #fff;
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.card-body form p {
+    margin-bottom: 1rem;
+}
+
+.form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 0.4rem 0.8rem;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    color: #fff;
+    background-color: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn:hover {
+    background-color: #fff;
+    color: #111;
+    box-shadow: 2px 2px #fff;
+}
+
+.btn-secondary {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.btn-secondary:hover {
+    background-color: #f44336;
+    color: #fff;
+    box-shadow: 2px 2px #f44336;
+}
+
+/* Campos del formulario */
+form input, form select, form textarea {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #222;
+    color: #fff;
+    font-size: 1rem;
+}
+
+/* Lista de archivos */
+#lista-archivos .list-group-item {
+    background-color: #222;
+    color: #fff;
+    border: 0.0625rem solid #444;
+}
+</style>
+
+<script>
+const inputArchivos = document.getElementById('id_archivos');
+const btnSubir = document.getElementById('btn-subir');
+const listaArchivos = document.getElementById('lista-archivos');
+let archivosSeleccionados = [];
+
+// Abrir el input al hacer clic en el botón negro
+btnSubir.addEventListener('click', () => inputArchivos.click());
+
+// Agregar archivos seleccionados a la lista visual
+inputArchivos.addEventListener('change', (e) => {
+    const nuevosArchivos = Array.from(e.target.files);
+    archivosSeleccionados = archivosSeleccionados.concat(nuevosArchivos);
+    actualizarLista();
+});
+
+// Actualiza la lista visual y el input real
+function actualizarLista() {
+    listaArchivos.innerHTML = '';
+    archivosSeleccionados.forEach((archivo, index) => {
+        const li = document.createElement('li');
+        li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+        li.innerHTML = `
+            <span><i class="bi bi-file-earmark-pdf text-danger me-2"></i>${archivo.name}</span>
+            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" onclick="eliminarArchivo(${index})">
+                <i class="bi bi-x-circle"></i> Eliminar
+            </button>
+        `;
+        listaArchivos.appendChild(li);
+    });
+
+    // Actualizar archivos en el input real
+    const dataTransfer = new DataTransfer();
+    archivosSeleccionados.forEach(file => dataTransfer.items.add(file));
+    inputArchivos.files = dataTransfer.files;
+}
+
+// Elimina un archivo de la lista
+function eliminarArchivo(index) {
+    archivosSeleccionados.splice(index, 1);
+    actualizarLista();
+}
+</script>
+{% endblock %}

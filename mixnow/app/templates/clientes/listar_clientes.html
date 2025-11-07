@@ -1,0 +1,172 @@
+{% extends "clientes/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="card-lista">
+    <h2 class="title">Lista de Clientes</h2>
+    <input type="text" id="searchInput" class="search-bar" placeholder="Buscar cliente...">
+
+    {% if clientes %}
+    <table class="table" id="clientesTable">
+            <thead>
+                <tr>
+                    <th>Rut</th>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                    <th>Obra</th>
+                    <th>Contacto Persona</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.Rut }}</td>
+                    <td>{{ cliente.cliente }}</td>
+                    {% if cliente.telefono %}
+                    <td>{{ cliente.telefono }}</td>
+                    {% else %}
+                    <td> </td>
+                    {% endif %}
+                    <td>{% if cliente.obra %}{{ cliente.obra }}{% else %}&nbsp;{% endif %}</td>
+                    <td>{{ cliente.persona_contacto }}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{% url 'editar_cliente' cliente.id %}" class="btn">Editar</a>
+                            <a href="{% url 'eliminar_cliente' cliente.id %}" class="btn btn-danger">Eliminar</a>
+                            <a href="{% url 'detalle_cliente' cliente.id %}" class="btn">Cotización</a>
+                            <a href="{% url 'detalle_cliente_epp' cliente.id%}" class="btn">EDP</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">No hay clientes registrados</p>
+        {% endif %}
+    </div>
+</div>
+<style>
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #111;
+    min-height: 80vh;
+    max-width: 105rem;
+    margin: 0 auto;
+}
+
+.card-lista {
+    background-color: #111;
+    border: 0.125rem solid #fff;
+    border-radius: 0.625rem;
+    padding: 2rem;
+    box-shadow: 0.25rem 0.25rem #fff;
+    color: #fff;
+    max-width: 100rem;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+
+.table {
+    width: 100%;
+    min-width: 70rem;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 1.08rem;
+}
+
+
+
+.table th, .table td {
+    border: 0.0625rem solid #fff;
+    padding: 0.5rem 1rem;
+    text-align: left;
+}
+
+.table th {
+    font-weight: 600;
+}
+
+.btn {
+    padding: 0.2rem 0.5rem;
+    border: 0.125rem solid #fff;
+    border-radius: 0.3125rem;
+    color: #ffffffff;
+    background-color: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn:hover {
+    background-color: #fff;
+    color: #111;
+    box-shadow: 0.125rem 0.125rem #fff;
+}
+
+.btn-danger {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.btn-danger:hover {
+    background-color: #f44336;
+    color: #fff;
+    box-shadow: 0.125rem 0.125rem #f44336;
+}
+
+.no-data {
+    text-align: center;
+    padding: 1rem 0;
+    color: #aaa;
+}
+    .search-bar {
+        display: block;
+        width: 100%;
+        max-width: 22rem;
+        margin: 0 auto 1.5rem auto;
+        padding: 0.6rem 1.2rem;
+        border: 0.125rem solid #fff;
+        border-radius: 0.5rem;
+        background: #222;
+        color: #fff;
+        font-size: 1.08rem;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0.125rem 0.125rem #fff;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .search-bar:focus {
+        outline: none;
+        border-color: #f44336;
+        box-shadow: 0.125rem 0.125rem #f44336;
+        background: #111;
+    }
+    </style>
+    <script>
+    // Filtro de búsqueda en la tabla de clientes
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('clientesTable');
+        searchInput.addEventListener('keyup', function() {
+            const filter = searchInput.value.toLowerCase();
+            for (const row of table.tBodies[0].rows) {
+                let text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            }
+        });
+    });
+    </script>
+{% endblock %}

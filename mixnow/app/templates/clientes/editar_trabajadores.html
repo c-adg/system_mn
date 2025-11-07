@@ -1,0 +1,196 @@
+{% extends "clientes/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="card edit-card">
+        <h2 class="title text-center mb-4">
+            <i class="bi bi-pencil-square"></i> Editar Trabajador
+        </h2>
+        <form method="post" enctype="multipart/form-data" class="needs-validation">
+            {% csrf_token %}
+
+            <div class="form-fields mb-4">
+                <!-- Campos del trabajador -->
+                {{ form.nombre.label_tag }} {{ form.nombre }}
+                {{ form.empresa.label_tag }} {{ form.empresa }}
+
+                <!-- Archivos existentes -->
+                <h4>Documentos existentes:</h4>
+                <ul class="document-list">
+                    {% for doc in documentos %}
+                        <li class="document-item">
+                            <a href="{{ doc.archivo.url }}" target="_blank" class="doc-link">
+                                <i class="bi bi-file-earmark-text"></i> {{ doc.titulo }}
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="document-item no-data">No hay documentos subidos.</li>
+                    {% endfor %}
+                </ul>
+
+                <!-- Subir nuevos archivos -->
+                <label for="archivos">Subir nuevos documentos</label>
+                <input type="file" name="archivos" multiple>
+            </div>
+
+            <div class="form-actions text-center">
+                <button type="submit" class="btn-glitch btn-glitch-primary">
+                    <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                </button>
+
+                <a href="{% url 'listar_trabajadores' trabajador.empresa.id %}" class="btn-glitch btn-glitch-secondary ms-2">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Wrapper general */
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50rem;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #111;
+}
+
+/* Card */
+.card.edit-card {
+    background-color: #111;
+    border: 0.125rem solid #fff;
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 40rem;
+    box-shadow: 0.25rem 0.25rem #fff;
+    color: #fff;
+}
+
+/* Título */
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* Form fields */
+.form-fields label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+.form-fields input,
+.form-fields select,
+.form-fields textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 0.3125rem;
+    border: 0.0625rem solid #ccc;
+    background-color: #222;
+    color: #fff;
+    font-size: 1rem;
+}
+
+/* Document list */
+.document-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+.document-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border: 0.0625rem solid #fff;
+    border-radius: 0.5rem;
+    background-color: #222;
+}
+.document-item.no-data {
+    justify-content: center;
+    color: #aaa;
+    font-style: italic;
+}
+.doc-link {
+    color: #fff;
+    text-decoration: none;
+}
+.doc-link:hover {
+    color: #f44336;
+    text-decoration: underline;
+}
+.delete-form {
+    margin: 0;
+}
+
+/* Form actions */
+.form-actions {
+    margin-top: 1.5rem;
+}
+.btn-glitch {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0.125rem;
+    border-radius: 0.3125rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+.btn-glitch-primary {
+    border: 0.125rem solid #fff;
+    background-color: #111;
+    color: #fff;
+}
+.btn-glitch-primary:hover {
+    background-color: #fff;
+    color: #111;
+    box-shadow: 0.125rem 0.125rem #fff;
+}
+.btn-glitch-secondary {
+    border: 0.125rem solid #f44336;
+    background-color: #111;
+    color: #f44336;
+}
+.btn-glitch-secondary:hover {
+    background-color: #f44336;
+    color: #fff;
+    box-shadow: 0.125rem 0.125rem #f44336;
+}
+.btn-danger {
+    border-color: #f44336;
+    color: #f44336;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+.btn-danger:hover {
+    background-color: #f44336;
+    color: #fff;
+    box-shadow: 0.125rem 0.125rem #f44336;
+}
+.btn-full {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+}
+
+.document-item .btn-glitch {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 10rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+    padding: 0;
+    margin: 0.25rem 0;
+}
+</style>
+{% endblock %}

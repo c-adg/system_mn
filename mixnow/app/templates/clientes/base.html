@@ -1,0 +1,362 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <title>MIXNOW-INVERLAND-ARIDOS-VALENTINO</title>
+</head>
+<body>
+
+{% if user.is_superuser %}
+<!-- Barra de navegación superior -->
+<nav class="top-nav">
+    <div class="nav-wrapper">
+        <div class="logo">
+            MIXNOW-INVERLAND-ARIDOS-VALENTINO
+        </div>
+        <div class="nav-menu">
+            <button class="menu-btn" onclick="toggleMenu()">Opciones / Módulos</button>
+        </div>
+    </div>
+</nav>
+
+<!-- Menú desplegable -->
+<div class="menu-content" id="menuContent">
+        <!-- Módulo: Inicio -->
+         <div class="menu-section">
+            <a href="{% url 'inicio' %}">Inicio</a>
+        </div>
+        <!-- Módulo: Clientes -->
+        <div class="menu-section">
+            <button class="submenu-btn" onclick="toggleSubmenu('clientesSubmenu')">Clientes ▼</button>
+            <div class="submenu" id="clientesSubmenu">
+                <a href="{% url 'listar_clientes' %}">Lista de Clientes</a>
+                <a href="{% url 'crear_cliente' %}">Añadir Cliente</a>
+            </div>
+        </div>
+
+        <!-- Módulo: Camiones -->
+        <div class="menu-section">
+            <button class="submenu-btn" onclick="toggleSubmenu('camionesSubmenu')">Camiones ▼</button>
+            <div class="submenu" id="camionesSubmenu">
+                <a href="{% url 'listar_camiones' %}">Lista de Camiones</a>
+                <a href="{% url 'crear_camiones' %}">Añadir Camión</a>
+            </div>
+        </div>
+
+
+        <!-- Módulo: Trabajadores -->
+        <div class="menu-section">
+            <button class="submenu-btn" onclick="toggleSubmenu('empresasSubmenu')">Trabajadores por Empresa ▼</button>
+            <div class="submenu" id="empresasSubmenu">
+                <a href="{% url 'listar_empresas' %}">Lista de Empresas</a>
+                <a href="{% url 'crear_trabajadores'%}">Crear Trabajador</a>
+            </div>
+        </div>
+
+        <!-- Módulo: Instrucciones -->
+        <div class="menu-section">
+            <a href="{% url 'instrucciones' %}">Instrucciones</a>
+        </div>
+
+        <!-- Cerrar sesión -->
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">Cerrar Sesión</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<!-- Contenido principal -->
+<main class="main-wrapper">
+    <div class="card">
+        {% block content %}
+        {% endblock %}
+    </div>
+</main>
+
+<!-- Script para desplegables -->
+<script>
+function toggleMenu() {
+    const menuContent = document.getElementById("menuContent");
+    menuContent.classList.toggle("show");
+    
+    // Cierra el menú al hacer clic fuera de él
+    if (menuContent.classList.contains("show")) {
+        document.addEventListener("click", closeMenuOutside);
+    } else {
+        document.removeEventListener("click", closeMenuOutside);
+    }
+}
+
+function closeMenuOutside(event) {
+    const menuContent = document.getElementById("menuContent");
+    const menuBtn = document.querySelector(".menu-btn");
+    
+    if (!menuContent.contains(event.target) && !menuBtn.contains(event.target)) {
+        menuContent.classList.remove("show");
+        document.removeEventListener("click", closeMenuOutside);
+    }
+}
+
+function toggleSubmenu(id) {
+    const submenu = document.getElementById(id);
+    submenu.classList.toggle("show");
+    event.stopPropagation(); // Evita que el clic se propague
+}
+</script>
+
+<style>
+html, body {
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #111;
+    color: #fff;
+}
+
+/* Barra de navegación superior */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #111;
+    border-bottom: 2px solid #fff;
+    z-index: 9999 !important; /* 🔥 siempre por encima */
+}
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 90rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+}
+
+.menu-btn {
+    padding: 0.8rem 1.5rem;
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.menu-btn:hover {
+    background-color: #fff;
+    color: #111;
+    box-shadow: 2px 2px #fff;
+}
+
+.menu-content {
+    display: none;
+    position: fixed;
+    top: 4rem;
+    right: 2rem;
+    width: 300px;
+    background-color: #111;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+    box-shadow: 4px 4px #fff;
+    z-index: 99999 !important; /* 🔥 más alto que todo */
+}
+
+.menu-content.show {
+    display: block;
+    animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-section {
+    margin-bottom: 1rem;
+}
+
+.submenu-btn {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    text-align: left;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.submenu-btn:hover {
+    background-color: #fff;
+    color: #111;
+    transform: translateX(5px);
+    box-shadow: 2px 2px #fff;
+}
+
+.submenu {
+    display: none;
+    margin-top: 0.4rem;
+    margin-left: 0.5rem;
+}
+
+.submenu.show {
+    display: block;
+}
+
+.submenu a, .menu-section > a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: #fff;
+    text-decoration: none;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    background-color: transparent;
+}
+
+.submenu a:hover, .menu-section > a:hover {
+    background-color: #fff;
+    color: #111;
+    transform: translateX(5px);
+    box-shadow: 2px 2px #fff;
+}
+
+.btn-logout {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    color: #ff0000ff;
+    background-color: transparent;
+    border: 2px solid #ff0000ff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.btn-logout:hover {
+    background-color: #ff0000ff;
+    color: #111;
+    transform: translateY(-2px);
+    box-shadow: 2px 2px #fff;
+}
+
+/* Contenido principal */
+.main-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 6rem 2rem 2rem;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 1 !important; 
+}
+
+.card {
+    background-color: #111;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 90rem;
+    box-shadow: 4px 4px #fff;
+    position: relative;
+    z-index: 1 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-wrapper {
+        padding: 0.5rem 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .menu-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .menu-content {
+        width: 280px;
+        right: 1rem;
+        padding: 1.5rem;
+    }
+
+    .main-wrapper {
+        padding: 8rem 1rem 2rem;
+    }
+
+    .card {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-wrapper {
+        padding: 0.5rem;
+    }
+
+    .menu-content {
+        width: 260px;
+        right: 0.5rem;
+    }
+}
+</style>
+
+</body>
+</html>

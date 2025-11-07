@@ -1,0 +1,482 @@
+<style>
+    @page { size: A4; margin: 1cm; }
+
+    body {
+        font-family: Arial, sans-serif;
+        color: #000;
+        background: #fff;
+        font-size: 1rem;
+        margin: 0;
+        padding: 0;
+    }
+
+    .carta { width: 100%; max-width: 21cm; margin: auto; }
+
+    /* Header */
+    .header {
+        text-align: center;
+        border-bottom: 2px solid #003366;
+        margin-bottom: 0.3cm;
+        padding-bottom: 0.1cm;
+    }
+    .header img { width: 15rem; }
+
+    /* Empresa */
+    .empresa-info {
+        text-align: center;
+        line-height: 1rem;
+        font-size: 0.7rem;
+    }
+    .empresa-info strong { color: #003366; }
+    .fila-empresa { display:flex; justify-content:center; gap:2.5cm; margin-top:0.1cm; }
+
+    /* Cotización */
+    .cotizacion {
+        display:flex;
+        justify-content:space-between;
+        border: 1px solid #003366;
+        padding:0.15cm 0.4cm;
+        margin:0.3cm auto;
+        font-weight:bold;
+        border-radius:3px;
+        background:#f1f4fa;
+        width:95%;
+    }
+    .cotizacion div { flex:1; text-align:center; }
+
+    /* Subtabla cliente */
+    .subtabla {
+        width:95%;
+        margin:0.2cm auto;
+        border:1px solid #003366;
+        border-collapse:collapse;
+        font-size:0.80rem;
+        
+    }
+    .subtabla td { border:1px solid #003366; padding:0.2cm 0.3cm; }
+    .subtabla i { font-size:0.80rem; }
+
+    /* Tabla productos */
+    table { width:95%; margin:0.2cm auto; border-collapse:collapse; font-size:0.80rem; }
+    table th, table td { border:1px solid #000; padding:0.15cm; text-align:center; }
+    table th { background:#003366; color:#fff; }
+
+    /* Totales */
+    .totales { width:95%; margin:0.2cm auto; font-size:0.80rem; border-collapse:collapse; }
+    .totales td { border:1px solid #ddd; padding:2px 4px; }
+    .totales tr:nth-child(1), .totales tr:nth-child(2) { background:#f9f9f9; font-weight:600; }
+    .totales tr:nth-child(3) { background:#e7ecf4; font-weight:bold; }
+    .totales td:first-child { text-align:left; }
+    .totales td:last-child { text-align:right; }
+
+    /* Observaciones */
+    .observaciones {
+        width:94%;
+        margin:0.4cm auto;
+        font-size:0.70rem;
+        padding:0.3cm;
+        border-left:3px solid #003366;
+        background:#f9f9f9;
+        border-radius:3px;
+    }
+    .observaciones p { margin:0.3cm 0; font-weight:600; }
+
+    /* Servicio */
+    .servicio {
+        width:95%;
+        margin:0.3cm auto;
+        border:1px solid #003366;
+        border-radius:4px;
+        padding:0.35cm;
+        background:#f7faff;
+        font-size:0.78rem;
+    }
+    .servicio h3 { text-align:center; color:#003366; margin:0 0 0.2cm 0; font-size:1rem; }
+    .servicio ul { margin:0.1cm 0 0.1cm 0.8cm; padding:0; }
+
+    /* Footer */
+    .footer { text-align:center; font-size:0.68rem; color:#003366; margin-top:0.3cm; font-weight:bold; }
+
+    /* No imprimir */
+    @media print { .no-print { display:none !important; } }
+    .card {
+    width: 80%;
+    max-width: 56.25rem;           
+    margin: 1.25rem auto;          
+    background-color: #fff;        
+    border: 0.0625rem solid #ddd;  
+    border-radius: 0.625rem;       
+    padding: 1.25rem;              
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1); 
+
+     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media print {
+  .carta {
+    page-break-before: always; 
+    page-break-inside: avoid;  
+  }
+
+  .carta:first-of-type {
+    page-break-before: auto; /
+  }
+}
+
+</style>
+
+<div class="carta">
+
+    <!-- HEADER -->
+    <div class="header">
+        <img src="https://res.cloudinary.com/dbn15ujjz/image/upload/v1760025100/logomixnow_bwe9nj.png" alt="Logo Mixnow">
+    </div>
+
+    <!-- EMPRESA -->
+    <div class="empresa-info">
+        <p><strong>MIX NOW HORMIGONES SPA</strong></p>
+        <p>FABRICACIÓN DE ARTÍCULOS DE HORMIGÓN, CEMENTO Y MOVIMIENTO DE TIERRA</p>
+        <div><strong>ARICA</strong></div>
+        <div class="fila-empresa">
+            <span><strong>RUT:</strong> 77.414.873-6</span>
+            <span><strong>Oficina:</strong> ANÍBAL CELEDÓN 1234</span>
+        </div>
+        <p>E-mail: <a href="mailto:mixnowhormigones@gmail.com">mixnowhormigones@gmail.com</a></p>
+    </div>
+
+    <!-- COTIZACIÓN -->
+    <div class="cotizacion">
+        <div>COTIZACIÓN N° {{ cotizacion.numero_cotizacion }}</div>
+        <div>{{ cotizacion.fecha|date:"d-m-Y" }}</div>
+    </div>
+
+    <!-- CLIENTE -->
+    <table class="subtabla">
+        <tr>
+            <td><strong>Nombre:</strong> {{ cotizacion.cliente.cliente }}</td>
+            <td rowspan="4" style="text-align:center;">
+                <strong>MIX NOW HORMIGONES SPA</strong><br>
+                RUT: 77.414.873-6<br>
+                <a href="mailto:mixnowhormigones@gmail.com">mixnowhormigones@gmail.com</a><br>
+                <strong>BANCO SANTANDER</strong><br>CTA. CTE: 00008414316-2
+            </td>
+        </tr>
+        <tr><td><strong>Rut:</strong> {{ cotizacion.cliente.Rut }}</td></tr>
+        {% if cotizacion.cliente.obra %}
+        <tr><td><strong>Dirección/Obra:</strong> {{ cotizacion.cliente.obra }}</td></tr>
+        {% endif %}
+        <tr><td><strong>Celular:</strong> {{ cotizacion.cliente.telefono|default_if_none:"" }}</td></tr>
+        <tr><td colspan="2"><i>Válido hasta: {{ cotizacion.valido_hasta }}</i> — <i>Emitido: {{ cotizacion.fecha|date:"d-m-Y" }}</i></td></tr>
+    </table>
+
+    <!-- PRODUCTOS -->
+    <table>
+        <tr>
+            <th>Servicio o producto</th>
+            <th>M3</th>
+            <th>Precio por M3</th>
+            <th>Subtotal</th>
+            <th>IVA</th>
+            <th>Total</th>
+        </tr>
+        {% for item in cotizacion.items.all %}
+        <tr>
+            <td>{{ item.descripcion }}</td>
+            <td>{{ item.cantidad_m3 }}</td>
+            <td>{{ item.precio_unitario|floatformat:0 }} {{ item.moneda }}</td>
+            <td>{{ item.subtotal|floatformat:0 }}</td>
+            <td>{{ item.iva|floatformat:0 }}</td>
+            <td>{{ item.total|floatformat:0 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- TOTALES -->
+    <table class="totales">
+        <tr><td>Subtotal general</td><td>{{ cotizacion.subtotal_general|floatformat:0 }} {{ items.0.get_moneda_display }}</td></tr>
+        <tr><td>IVA TOTAL</td><td>{{ cotizacion.iva_total|floatformat:0 }} {{ items.0.get_moneda_display }}</td></tr>
+        <tr><td>Total general</td><td>{{ cotizacion.total_general|floatformat:0 }} {{ items.0.get_moneda_display }}</td></tr>
+    </table>
+
+    <!-- OBSERVACIONES -->
+    <div class="observaciones">
+        <p> - "EL SERVICIO DEBE ESTAR PAGADO AL 100% PARA SU DESPACHO"</p>
+        <p> - * MIX NOW HORMIGONES EQUIPOS: 2 PLANTAS DE HORMIGÓN MIX 70 Y MIX 100 (CALIBRADAS)
+         — 8 CAMIONES MIXER, 6 BOMBAS DE HORMIGÓN.</p>
+        <p> - VALENTINO VENEGAS — CEL: +56 977760047</p>
+    </div>
+
+    <!-- SERVICIO -->
+    <div class="servicio">
+        <h3>Información del Servicio</h3>
+        <p><strong>Estimado Cliente(a):</strong></p>
+        <p>Para confirmar el servicio se solicita el pago total.</p>
+        <p><u>Medios de pago:</u> Efectivo o Transferencia.</p>
+        <ul>
+            <li>Incluye visita técnica confirmada.</li>
+            <li>Tiempo de descarga: 2–4,5 m³ = 1h / 5–7 m³ = 1,5h aprox.</li>
+            <li>No incluye arriendo de vibradora ni gestión de permisos.</li>
+            <li>Cubicar obra y disponibilidad de camiones.</li>
+            <li>No agregar agua al hormigón.</li>
+        <div class="card">
+            <h2>Condiciones Comerciales:</h2>
+            <p>- MixNow se reserva el derecho de aceptar o rechazar Órdenes de Compra u otros documentos que modifiquen las
+                condiciones cotizadas o impliquen una aceptación parcial de las mismas.</p>
+            <p>- Los precios unitarios de los productos, rigen a partir de la fecha estipulada como inicio de obra en el presente
+                documento y mantendrán una vigencia de 6 meses. Se deja constancia que los precios fueron determinados según
+                la información contenida en la cabecera de esta cotización, la que especifica el volumen, fecha de inicio de los
+                despachos, plazos de ejecución, ubicación de la obra, mandante, y condiciones de pago. Cualquier cambio(s) en
+                alguna(s) de estas condiciones, o bien, cualquier variación en los costos de fabricación y suministro objeto de la
+                presente cotización, facultará a MIX NOW HORMIGONES SPA. (MIX NOW), para
+                modificar unilateralmente los precios de la cotización. </p>
+            <p>- MixNow, sólo responderá por los daños directos debidamente acreditados que el cliente hubiere sufrido
+                por el incumplimiento de sus obligaciones respecto a la calidad del hormigón; siempre que dicho incumplimiento
+                le fuere imputable por culpa leve. Con todo, la responsabilidad de MixNow, sus directores, ejecutivos,
+                empleados, asesores, empresas relacionadas, matriz y/o filiales, incluyendo pero no limitándose a todos los casos
+                de responsabilidad contractual, extracontractual, responsabilidad civil y comercial, penalidades, incumplimientos
+                de garantías, reclamos de terceros u otras, en ningún caso superará respecto de todos ellos en conjunto, el 100
+                % del valor del contrato o del volumen de hormigón efectivamente entregado de acuerdo a las órdenes de compra
+                aceptadas por MixNow, según sea el caso, monto que operará como límite máximo de responsabilidad por todo
+                concepto
+            </p>
+            <p>- MixNow no responderá por eventuales daños o perjuicios derivados del incumplimiento total o parcial de sus
+                obligaciones cuando aquello sea consecuencia de eventos de caso fortuito o fuerza mayor, según lo dispuesto
+                en el artículo 45 del Código Civil, tales como, y sin que la enumeración a continuanción sea taxativa, terremotos,
+                inundaciones u otro desastre natural, actos de autoridad, manifestaciones, huelgas y paralizaciones en general,
+                pudiendo incluso suspender la entrega del producto hasta la finalización del evento de fuerza mayor o caso fortuito.
+                En consecuencia, por este concepto no serán aplicables y serán inoponibles a MIX NOW HORMIGONES SPA., todo tipo de
+                multas, penalizaciones, retenciones, indemnizaciones, mayores costos, gastos, ejecución de garantías, etc.
+            </p>
+            <p>- En atención al Contrato de Distribución Comercial suscrito entre MixNow , las facturas correspondientes
+                al suministro de hormigón serán emitidas por MixNow por cuenta de MixNow. De la misma manera, las órdenes de
+                compra deberán ser emitidas a nombre de MIX NOW HORMIGONES SPA., RUT 77.414.873-6. como también los pagos de
+                las respectivas facturas deberán ser realizados a Mix Now
+            </p>
+            <p>- Si el cliente solicitara adjuntar Órdenes de Compra, Guías de Despacho u otros documentos a la Factura de Venta,
+                esto tendrá un costo de 0,05 UF + IVA por cada copia de documento. Adicionalmente, se cobrará 0,5 UF + IVA en
+                caso de requerirse envío físico de los documentos.
+            </p>
+            <p>- El no pago de cualquiera de las facturas emitidas en el plazo acordado facultará a MixNow a suspender el
+                suministro de hormigón contratado.
+            </p>
+        </div>
+        <div class="card">
+            <h2>Programación y Despacho:</h2>
+            <p>- El horario estándar de despacho es de lunes a viernes de 8:00 a 18:00 horas (primer y último camión en obra) y
+                los días sábado de 8:00 a 14:00 horas (primer y último camión en obra). Dependiendo de la zona de país, se podrá
+                modificar horarios y días de atención, recomendamos consultar previo a su solicitud.
+            </p>
+            <p>- Es de responsabilidad y costo del cliente la obtención de autorización de pases de ingreso y los permisos de
+                descarga en el exterior de la obra.
+            </p>
+            <p>- Será de responsabilidad y costo del cliente el acondicionamiento de los caminos interiores de la faena, considerando
+                que el ancho mínimo de acceso a la obra debe ser de 5,0 m. y una altura libre de 4,0 m., los que deben estar
+                iluminados y despejados para una operación segura y adecuada.
+            </p>
+            <p>- Es responsabilidad y costo del cliente el hormigón despachado de acuerdo a la programación y que por problemas
+                atribuibles a la obra no sean recibidos. De igual manera aquellos viajes solicitados y que no sean descargados en su
+                totalidad.
+            </p>
+            <p>- MixNow se reserva el derecho de suspender temporal o definitivamente el servicio, en caso de contingencias de
+                fuerza mayor, caso fortuito u otras causas que afecten la calidad de los hormigones y la seguridad en las condiciones
+                de entrega.
+            </p>
+            <p>- Toda modificación y/o anulación solicitadas por el cliente tendrá un sobre cargo por evento de la siguiente forma: (a)
+                Modificaciones y/o anulaciones de la programación solicitada hasta las 17 horas del día anterior al despacho (para los
+                días lunes se considera las 11 horas del sábado anterior) tendrán un cargo de 1 UF por evento. (b) Modificaciones y/o
+                anulaciones de la programación solicitadas después de las 17 horas del día anterior al despacho, hasta 3 horas antes
+                del despacho, tendrán un cargo de 2 UF por evento. (c) Cualquier modificación y/o anulación que se realice en plazo
+                inferior a las 3 horas antes del despacho (dentro del horario de atención) tendrá un cargo de 3 UF por evento, más el
+                costo del hormigón de la guía de despacho y el costo de disposición del hormigón (HNC) en caso que el camión esté
+                cargado. Las anulaciones del Servicio de Bombeo se deben realizar hasta las 12 horas del día anterior a la prestación
+                del servicio, a todas las anulaciones efectuadas después de las 12 horas se cobrará el costo de la salida en falso,
+                monto que está estipulado en el cobro de servicios (sólo se reciben modificaciones y/o anulaciones de programas de
+                bomba de lunes a viernes en 8:00 a 17:00). Toda modificación queda sujeta a la disponibilidad de MixNow.
+            </p>
+            <p>- La entrega de hormigón se efectuará en camiones mixer con capacidad de 7,5 m3. En caso de despachos con
+                volumen inferior, el cliente deberá cancelar la carga incompleta, cobro aplicado al volumen programado por camión
+                inferior a 7,0 m3. Sobre 21 m3 programados, de un mismo pedido y el mismo tipo de hormigón, solo para el último
+                camión se considera de ajuste y quedará liberado de cobro. El volumen mínimo a transportar es de 2 m3.
+            </p>
+            <p>- Se entenderá por estadía de camión en obra, al tiempo transcurrido entre la llegada del camión a la obra y su salida
+                desde la misma, la cual no podrá exceder los 60 minutos y/o la frecuencia contratada, si ésta fuese menor a 60
+                minutos. Se entenderá por frecuencia contratada al tiempo programado entre dos despachos de hormigón a la obra.
+                A modo de ejemplo, si la frecuencia contratada es de 30 minutos, la estadía del camión en obra no podrá superar los
+                30 minutos, a su vez, si la frecuencia contratada es de 70 minutos, la estadía de camión en obra no podrá exceder los
+                60 minutos. En caso que la estadía del camión en obra exceda los límites señalados, se cobrará UF 0,5 por cada 15
+                minutos en exceso. Cumplidos 60 minutos de estadía, MixNow retirará el camión desde la obra y el cliente deberá
+                pagar la totalidad de los metros cúbicos de hormigón indicado en la guía de despacho. En el evento de producirse
+                daños en la betonera por haberse sobrepasado el límite de 60 minutos, el cliente deberá reembolsar a Mix Now los
+                gastos en que ésta deba incurrir para su reparación o cambio.
+            </p>
+            <p>- El cliente deberá descargar la totalidad del hormigón solicitado,en caso contrario, el hormigón sobrante deberá ser
+                descargado en el lugar habilitado para ello por el cliente dentro de la misma obra. En caso que la obra no cuente con
+                un lugar habilitado para estos efectos, el cliente podrá usar el servicio de traslado y disposición de hormigón sobrante
+                ofrecido por MixNow, el cual será cobrado por cada camión mixer con material no descargado. Este servicio será
+                facturado en los días posteriores al respectivo despacho, según el valor indicado en la cotización.
+            </p>
+        </div>
+        <div class="card">
+            <h2>Servicio de Bombeo:</h2>
+            <p>- Se entiende por servicio de bombeo un servicio durante una jornada am o pm, de no más de 4 horas, 
+                como referencia para 35 m3.
+            </p>
+            <p>-  Toda programación de despacho con servicio de bombeo debe contar con una visita de factibilidad de bombeo. El
+                plazo para una visita de factibilidad es de 72 hrs hábiles a contar del día siguiente de la solicitud.
+            </p>
+            <p>- Toda programación de despacho con servicio de bombeo, debe ser solicitada con una anticipación de al menos 72
+                hrs hábiles anterior a la fecha del servicio solicitado, lo que será respondido hasta 24 hrs hábiles antes de la fecha del
+                servicio solicitado, ya sea con una respuesta positiva o con una propuesta de reprogramación.
+            </p>
+            <p>- Se considerarán horarios AM servicios solicitados desde las 9:00 hrs y 
+                servicios PM los solicitados desde las 14:00 hrs.
+            </p>
+        </div>
+        <div class="card">
+            <h2>Condiciones Técnicas:</h2>
+            <p>- Las normas de referencia para el diseño, confección, transporte y evaluación de hormigones, son NCh170, NCh1934,
+                NCh1998, en sus aspectos normales, corrientes y considerados de buena práctica.
+            </p>
+            <p>- De acuerdo a la normativa vigente (NCh170 2016), los únicos productos aceptados para hormigón armado son los
+                grados G17 y superiores, con fracción defectuosa de 10%, por lo cual están dosificados considerando una dosis
+                mínima de cemento de 240 kg/m3. En caso de requerir otros valores de dosis mínima y/o requisitos por durabilidad
+                (ver NCh170), será responsabilidad del cliente indicarlo formalmente para realizar los ajustes técnicos, operacionales
+                y comerciales que sean necesarios.
+            </p>
+            <p>- La obra entregará todas las facilidades de ingreso a la misma a objeto de verificar las condiciones óptimas de
+                recepción, colocación y muestreo del hormigón.
+            </p>
+            <p>- En atención a la variabilidad de las materias primas, los procesos productivos, condiciones ambientales, transporte,
+                bombeo y colocación entre otras variables, MixNow se reserva el derecho de realizar ajustes al diseño de
+                mezcla, principalmente por medio de modificaciones en las dosis de materias primas, ajustes que tendrán por objetivo
+                optimizar y asegurar el desempeño comprometido de los productos. 
+            </p>
+            <p>- El control de volúmenes y rendimientos se debe realizar bajo parámetros establecidos en la norma NCh1934.
+            </p>
+            <p>- Cualquier solicitud o modificación, de muestra de hormigón debe ser solicitada a más tardar el día anterior al
+                despacho antes de las 17:00 horas.
+            </p>
+            <p>- Para el control de calidad de los hormigones y/o morteros, se tomará una muestra para rotura por compresión en
+                probetas cilíndricas cada 150 m3 del volumen total de la obra, la que será ensayada a 7 y 28 días. Se excluye para
+                la frecuencia de muestreo los hormigones dosificados por sacos de cemento (Tipo S), livianos (Tipo L) y, en general,
+                todo aquel en que no se relacione con resistencia mecánica especificada. Sólo pueden ser muestreados aquellos
+                despachos que cumplan con un mínimo volumen de 4 m3.
+            </p>
+            <p>- Las condiciones de muestreo de los productos suministrados por MixNow, consideran utilización de probeta
+                cilíndrica, compactación de muestras con vibrador de inmersión, curado bajo agua en obra y curado bajo agua en
+                laboratorio.
+            </p>
+            <p>- Para el análisis de resultados y toma de asentamiento de cono, sólo se considerarán las muestras tomadas dentro de
+                los 30 minutos desde la llegada del camión mixer a la obra, excluyendo el 10% inicial y final de la carga total.
+            </p>
+            <p>- El curado inicial y el cuidado de las muestras son de responsabilidad del cliente. Para ello, el cliente debe aportar con
+                agua para las piscinas, en caso de ser necesario, y habilitar un lugar físico protegido de la intemperie, de movimientos
+                y/o impactos para la confección y permanencia de las muestras en obra hasta su retiro por el laboratorio acreditado.
+                El extravío o daño de los recursos empleados en el muestreo y curado de las probetas (moldes, piscinas, otros),
+                serán de cargo y responsabilidad del cliente al costo que indique el laboratorio.
+            </p>
+            <p>- Los resultados de ensayos de resistencia se evalúan según el método de media móvil de tres muestras consecutivas,
+                de acuerdo con el procedimiento establecido en la Norma Chilena de evaluación NCh1998.
+            </p>
+            <p>- Para la aceptación de los hormigones por parte del cliente, se considerarán los resultados de resistencia entregados
+                por el Laboratorio acreditado que MixNow haya ofrecido para la obra. Cualquier otro resultado obtenido con otro
+                laboratorio sin previo acuerdo entre las partes, no serán de responsabilidad de MixNow, por lo cual el cliente
+                deberá resolver en forma directa con su mandante cualquier resultado que esté bajo lo indicado por la norma.
+            </p>
+            <p>- Independiente de lo anterior, frente a dudas sobre la resistencia mecánica potencial del hormigón suministrado,
+                particularmente por resultados provenientes de laboratorios distintos a los que MixNow ofrece, se consideran
+                sólo en caso que cumplan con la normativa nacional vigente, que sean oportunos y cuenten con toda la información
+                necesaria para su evaluación. El cliente debe enviar a MixNow cada informe de resultado dentro de los 5 días
+                hábiles posterior al ensayo y deberá ser acompañado de la estadística completa de todas las muestras y resultados
+                obtenidos a la fecha. De persistir las dudas, se deberán aplicar los ensayos y pruebas necesarias (incluyendo
+                extracción, ensaye y evaluación de testigos según NCh1171) por parte del laboratorio que se acuerde entre las
+                partes, tomando en consideración que sea de vasta experiencia en dicha actividad. La responsabilidad por los costos
+                será analizada en cada caso.
+            </p>
+            <p>- MixNow no será responsable de controles de resultados provenientes de testigos de hormigón endurecido, dado
+                que ellos están afectados por las condiciones de colocación, compactación y curado, las cuales no son administradas
+                por personal de MixNow.
+            </p>
+            <p>- MixNow no se hará cargo de eventuales multas cursadas al cliente 
+                y/o su mandante producto de evaluaciones estadísticas.</p>
+            <p>- MixNow no será responsable por fenómenos no deseados en el hormigón, producto de condiciones particulares de
+                la obra que no hayan sido informada formalmente por el cliente, tales como Especificaciones Técnicas particulares
+                o generales, solicitudes de la ITO, del Proyectista u otras, y/o producto de condiciones especiales de obra, tales
+                como: elementos masivos, temperaturas máximas o mínimas de los hormigones, adiciones en obra de algún producto
+                en particular, colocación (altura de caída, inclinación de canoas, reducciones de tuberías), condiciones de servicio
+                durante su vida útil, condiciones climáticas (temperaturas, evaporación), u otros que se aparten de las condiciones
+                normales, corrientes y de buena práctica.
+            </p>
+        </div>
+        <div class="card">
+            <h2>Condiciones de Seguridad:</h2>
+            <p>- Se prohíbe el tránsito de mixer por puentes con capacidad de tonelaje inferior a 32 toneladas de peso bruto vehicular, por lo que, si corresponde a dependencia del cliente, éste deberá proporcionar alguna alternativa.</p>
+            <p>- Se prohíbe el tránsito de mixer por puentes sin señalética de tonelaje; si corresponde a dependencia del cliente, éste debe presentar documentación que acredite la resistencia por personal calificado.</p>
+            <p>- Se prohíbe el tránsito de mixer por pasos sobre nivel que no cumplan con una altura mínima de 4,2 m, debiendo el cliente proporcionar alguna alternativa.</p>
+            <p>- Se prohíbe el tránsito de mixer por calles donde se prohíba el tránsito de camiones de alto tonelaje, debiendo el cliente, en cualquier caso, solicitar la autorización de las autoridades que correspondan.</p>
+            <p>- Se prohíbe el tránsito de mixer en sectores donde no se cumpla la altura mínima de cables y tendido eléctrico (5,5 metros).</p>
+            <p>- El mixer solo podrá transitar por caminos definidos y habilitados para el tránsito de camiones con un ancho mínimo de 3,5 metros. Se prohíbe el tránsito por ríos y/o similares con presencia de agua.</p>
+            <p>- No deben existir obstáculos ni materiales o elementos que dificulten el posicionamiento del mixer en obra. MixNow velará por el cumplimiento de estas condiciones de seguridad.</p>
+            <p>- El cliente debe evitar la intervención de terceros durante el proceso de descarga de hormigón y en ningún caso podrá acceder a la zona segura de descarga definida por el operador del equipo.</p>
+
+            <p>- El posicionamiento de mixer en puntos de descarga junto a elevaciones deberá contar con protecciones mediante pantallas.</p>
+
+            <p>- No se debe ubicar el mixer ni exponer al operador bajo carga suspendida y/o en zonas donde exista riesgo potencial de caída de elementos desde altura.</p>
+
+            <p>- En ingresos y salidas de obras donde exista tránsito peatonal y/o vehicular, la obra deberá disponer de al menos un paletero.</p>
+
+            <p>- Al posicionar o transitar el mixer en obra, se debe asegurar una distancia mínima de 1,5 metros respecto a cortes de terreno y 1 metro respecto a muros. El terreno debe estar compactado. La obra deberá disponer de barreras duras hacia los cortes de terreno, un pretil para el tope de ruedas de camiones y mantener la compactación.</p>
+
+            <p>- El mixer solo debe bajar pendientes de frente; en caso de que sea necesario ingresar retrocediendo, MixNow deberá realizar la factibilidad de obra (considerar que el máximo de pendiente es 10°).</p>
+
+            <p>- El mixer solo debe subir pendientes de frente; en caso de que sea necesario ingresar retrocediendo, MixNow deberá realizar la factibilidad de obra (considerar que el máximo ideal de pendiente es 10°).</p>
+
+            <p>- La descarga de hormigón debe realizarse preferentemente en terreno plano.</p>
+
+            <p>- Cuando se requiera realizar descarga en pendiente negativa, debe efectuarse bajo los siguientes criterios:</p>
+            <ul>
+            <li>10° máxima pendiente negativa</li>
+            <li>Uso de 1 par de cuñas en el primer eje traccional</li>
+            <li>Una cuña por cada lado del eje</li>
+            <li>Cuñas con capacidad para 60-80 toneladas</li>
+            <li>Terreno mixto con base estabilizada</li>
+            <li>Carga máxima: 7,5 m³</li>
+            </ul>
+                <p>- Cuando se requiera realizar descarga en pendiente positiva, debe efectuarse bajo los siguientes criterios:</p>
+                <ul>
+                <li>10° máxima pendiente positiva</li>
+                <li>Uso de 1 par de cuñas en el primer eje traccional</li>
+                <li>Una cuña por cada lado del eje</li>
+                <li>Cuñas con capacidad para 60-80 toneladas</li>
+                <li>Terreno mixto con base estabilizada</li>
+                <li>Carga máxima: 5,5 m³</li>
+                </ul>
+                <p>- Se prohíbe posicionar el mixer sobre rampas hechizas. El cliente debe garantizar que las rampas estén certificadas por un profesional competente, 
+                    con capacidad para resistir 32 toneladas y permitir levantar los dos ejes traseros del camión.</p>
+                <p>- Si el cliente requiere descargar en vía pública utilizando aceras y/o calzadas, debe enviar el permiso de uso de vía pública otorgado por la municipalidad o el documento de permiso de uso de lugar privado antes de iniciar el proyecto. Cualquier multa o cargo imputado por no cumplir estas condiciones será de exclusiva responsabilidad del cliente.</p>
+
+        <p>- Cuando alguna condición de seguridad durante la descarga no se cumpla o se vea afectada la seguridad o integridad física del operador del camión mixer, MixNow tendrá la facultad de suspender la entrega del producto hasta realizar una reunión en terreno para tomar las medidas necesarias y retomar las descargas (personal de MixNow y de la constructora involucrada).</p>
+
+        <p>- En caso de ocurrir un accidente o incidente en obra, las descargas serán suspendidas hasta la entrega del informe de investigación del evento por parte de la constructora y la verificación de cumplimiento de las medidas establecidas por MixNow.</p>
+
+        <p>- En caso de reiteración de eventos en la constructora, las descargas serán suspendidas hasta generar una reunión con la gerencia de la empresa involucrada, quienes deberán presentar un informe de investigación, las medidas adoptadas y una carta de compromiso por la seguridad.</p>
+
+        <p>- El cliente deberá verificar el cumplimiento de las condiciones de seguridad indicadas; si alguna de ellas no se cumple, deberá dar aviso a MixNow para que pueda realizar una visita a terreno y evaluar la factibilidad.</p>
+
+        <p>- En caso de que, debido a omisiones o errores en la información entregada, el despacho no pueda realizarse, esto será de exclusiva responsabilidad del cliente.</p>
+    </ul>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">MIXNOW.CL HORMIGONES SPA</div>
+
+</div>
+
+<!-- Botón PDF -->
+<div class="no-print" style="text-align:center; margin-top:0.5cm;">
+    <a href="{% url 'generar_pdf' cotizacion.id 'mixnow' %}" style="padding:0.4rem 1rem; background:#003366; color:#fff; text-decoration:none; border-radius:3px;">Descargar PDF</a>
+</div>

@@ -1,0 +1,324 @@
+{% extends 'clientes/base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="titulo">COTIZACIÓN PARA: {{ cliente.cliente }}</h1>
+
+    <!-- Sección: Agregar Ítem -->
+    <div class="card">
+        <div class="card-header">Agregar Ítem</div>
+        <div class="card-body">
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    {{ form.cantidad_m3.label_tag }}
+                    {{ form.cantidad_m3 }}
+                </div>
+                <div class="form-group">
+                    {{ form.descripcion.label_tag }}
+                    {{ form.descripcion }}
+                </div>
+                <div class="form-group">
+                    {{ form.moneda.label_tag }}
+                    {{ form.moneda }}
+                </div>
+                <div class="form-group">
+                    {{ form.precio_unitario.label_tag }}
+                    {{ form.precio_unitario }}
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" name="accion" value="agregar_item" class="btn-agregar">Agregar Ítem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sección: Crear Cotización -->
+    <div class="card">
+        <div class="card-header">Crear Cotización</div>
+        <div class="card-body">
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="valido_hasta">Válido Hasta:</label>
+                    <input type="date" id="valido_hasta" name="valido_hasta">
+                </div>
+                <div class="form-group">
+                    <label>Empresa:</label>
+                    <div class="radio-buttons">
+                        <label>
+                            <input type="radio" name="opcion_destino" value="aridos" checked> Áridos
+                        </label>
+                        <label>
+                            <input type="radio" name="opcion_destino" value="valentino"> Valentino
+                        </label>
+                        <label>
+                            <input type="radio" name="opcion_destino" value="inverland"> Inverland
+                        </label>
+                        <label>
+                            <input type="radio" name="opcion_destino" value="mixnow"> Mixnow Arica
+                        </label>
+                        <label>
+                            <input type="radio" name="opcion_destino" value="mixnow_antofagasta"> Mixnow Antofagasta
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" name="accion" value="crear_cotizacion" class="btn-crear">Crear Cotización</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sección: Ítems agregados -->
+    <div class="card">
+        <div class="card-header">Ítems Agregados</div>
+        <div class="card-body">
+            {% if items_temporales %}
+            <table class="tabla-items">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Cantidad (m³)</th>
+                        <th>Precio Unitario</th>
+                        <th>Moneda</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items_temporales %}
+                    <tr>
+                        <td>{{ item.descripcion }}</td>
+                        <td>{{ item.cantidad_m3 }}</td>
+                        <td>{{ item.precio_unitario |floatformat:0  }}</td>
+                        <td>{{ item.moneda }}</td>
+                        <td>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="accion" value="eliminar_item">
+                                <input type="hidden" name="item_index" value="{{ forloop.counter0 }}">
+                                <button type="submit" class="btn-eliminar">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="no-items">No hay ítems agregados.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+/* =========================
+   ESTRUCTURA GENERAL
+========================= */
+.container {
+    max-width: 60rem; 
+    margin: 2rem auto;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+/* =========================
+   TÍTULOS
+========================= */
+.titulo {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.titulo-cotizacion {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+    font-size: 1.4rem;
+    color: #fff;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Línea divisoria */
+.linea-divisoria {
+    grid-column: 1 / -1;
+    border: 0.5px solid #ffffff44;
+    margin: 0.5rem 0 1rem 0;
+}
+
+/* =========================
+   TARJETAS (CARDS)
+========================= */
+.card {
+    background-color: #1111;
+    border: 0.0625rem solid #fff;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    font-weight: bold;
+    padding: 1rem;
+    font-size: 1.25rem;
+    border-bottom: 0.0625rem solid #fff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+/* =========================
+   FORMULARIO
+========================= */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid #ffffff;
+    background-color: #00000011;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* =========================
+   BOTONES
+========================= */
+.form-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.btn-agregar {
+    border: 0.0625rem solid #27ae60;
+    background: transparent;
+    color: #27ae60;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-agregar:hover {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.btn-crear {
+    border: 0.0625rem solid #2980b9;
+    background: transparent;
+    color: #2980b9;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-crear:hover {
+    background-color: #2980b9;
+    color: #fff;
+}
+
+/* =========================
+   TABLA DE ÍTEMS
+========================= */
+.tabla-items {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.tabla-items th,
+.tabla-items td {
+    border: 0.0625rem solid #fff;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+
+.tabla-items thead {
+    background-color: #1111;
+    color: #fff;
+}
+
+.tabla-items tbody tr:nth-child(even) {
+    background-color: #1111;
+}
+
+.no-items {
+    font-style: italic;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Botón eliminar */
+.btn-eliminar {
+    border: 0.0625rem solid #c0392b;
+    background-color: transparent;
+    color: #c0392b;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-eliminar:hover {
+    background-color: #c0392b;
+    color: #fff;
+}
+
+/* =========================
+   BOTONES TIPO RADIO EMPRESAS
+========================= */
+
+.radio-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.radio-buttons label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #ffffffff;
+}
+
+.radio-buttons input[type="radio"] {
+    accent-color: #000000ff;
+    cursor: pointer;
+}
+
+</style>
+{% endblock %}

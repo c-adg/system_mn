@@ -1,0 +1,183 @@
+{% extends "clientes/base.html" %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="card-lista">
+        <h2 class="title">Estado de Documentación de Camiones</h2>
+
+        <div class="estados-container">
+            {% for camion in camiones_con_fechas %}
+                <div class="estado-camion">
+                    <div class="camion-header">
+                        <h3>{{ camion.vehiculo }} - {{ camion.patente }}</h3>
+                        <span class="empresa">{{ camion.empresa }}</span>
+                    </div>
+                    
+                    <div class="documentos-grid">
+                        {% for doc in camion.documentos %}
+                        <div class="documento-card">
+                            <h4>{{ doc.nombre }}</h4>
+                            <div class="estado-badge {{ doc.clase }}">
+                                {{ doc.estado }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="no-data">No hay camiones registrados</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+/* --- CONTENEDOR GENERAL --- */
+.wrapper {
+    padding: 3rem 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #111;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* --- TARJETA PRINCIPAL --- */
+.card-lista {
+    background-color: #111;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 6px 6px #fff;
+    color: #fff;
+    width: 100%;
+    max-width: 1200px;
+    transition: transform 0.3s ease;
+}
+
+.card-lista:hover {
+    transform: translateY(-3px);
+}
+
+/* --- TÍTULO --- */
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* --- GRID DE ESTADOS DE CAMIONES --- */
+.estados-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+}
+
+/* --- CADA TARJETA DE CAMIÓN --- */
+.estado-camion {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 1.8rem;
+    box-shadow: 0 3px 6px rgba(255, 255, 255, 0.08);
+    border: 1px solid #333;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.estado-camion:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* --- CABECERA DEL CAMIÓN --- */
+.camion-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.camion-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.empresa {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* --- GRID DE DOCUMENTOS --- */
+.documentos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+/* --- TARJETA DE DOCUMENTO --- */
+.documento-card {
+    padding: 1rem;
+    border-radius: 8px;
+    background: #222;
+    border: 1px solid #333;
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+.documento-card:hover {
+    transform: translateY(-3px);
+    border-color: #555;
+    box-shadow: 0 2px 6px rgba(255, 255, 255, 0.08);
+}
+
+.documento-card h4 {
+    margin: 0 0 0.7rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+
+/* --- ETIQUETA DE ESTADO --- */
+.estado-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Colores de estado (sin cambios de tono) */
+.estado-badge.danger {
+    background-color: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    border: 1px solid #ff4444;
+}
+
+.estado-badge.success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+
+/* --- SIN DATOS --- */
+.no-data {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    font-size: 1rem;
+    margin-top: 2rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estado de Pago {{ estado.id }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 25px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background-color: #ffffffff;
+    }
+    .header-table {
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    .header-table td {
+      border: none;
+      text-align: left;
+      padding: 4px 8px;
+    }
+    .totales {
+      width: 40%;
+      float: right;
+      border: 1px solid #444;
+    }
+    .totales td {
+      border: 1px solid #444;
+      padding: 6px;
+    }
+    .right {
+      text-align: right;
+    }
+
+     @media print {
+      .no-print {
+      display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Contenedor del título centrado -->
+  <div style="text-align: center; margin-bottom: 20px;">
+      <h2 style="margin: 0;">ESTADO DE PAGO {{ estado.id }}</h2>
+  </div>
+
+  <!-- Contenedor del logo separado -->
+  <div style="text-align: right; margin-bottom: 20px;">
+      <img src="https://res.cloudinary.com/dbn15ujjz/image/upload/v1760025127/logovalentino_azsleq.png" 
+          alt="Logo" 
+          style="height: 5rem; margin-top: -4rem; width:12rem; margin-left: 3rem;">
+  </div>
+
+  <table class="header-table">
+    <tr><td><b>ESTADO DE PAGO N°:</b> {{ estado.id }}</td></tr>
+    <tr><td><b>FECHA DE EMISIÓN:</b> {{ estado.fecha_emision|date:"d-m-Y" }}</td></tr>
+    <tr><td><b>MES DEL SERVICIO:</b> {{ estado.mes_servicio }}</td></tr>
+    <tr><td><b>CONSTRUCTORA:</b> {{ cliente.cliente }}</td></tr>
+    <tr><td><b>RUT :</b> {{ cliente.Rut }}</td></tr>
+    <tr><td><b>OBRA :</b> {{ cliente.obra }}</td></tr>
+    <tr><td><b>TIPO DE SERVICIO:</b> {{ estado.tipo_servicio }}</td></tr>
+    {% if estado.usar_uf %}
+    <tr><td><b>VALOR UF:</b> ${{ estado.valor_uf|floatformat:0 }}</td></tr>
+    {% endif %}
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ITEMS</th>
+        <th>GUÍA</th>
+        <th>FECHA</th>
+        <th>PATENTE</th>
+        <th>MATERIAL</th>
+        <th>CANTIDAD</th>
+        <th>UNIDAD</th>
+  {% if estado.usar_uf %}
+  <th>P.U. (UF)</th>
+  <th>VALOR NETO (CLP)</th>
+  {% else %}
+  <th>P.U. (CLP)</th>
+  <th>VALOR NETO</th>
+  {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ item.guia }}</td>
+        <td>{{ item.fecha_item|date:"d-m-Y" }}</td>
+        <td>{{ item.patente }}</td>
+        <td>{{ item.material }}</td>
+        <td>{{ item.cantidad }}</td>
+        <td>{{ item.unidad }}</td>
+  {% if estado.usar_uf %}
+  <td>{{ item.valor_en_uf|floatformat:2 }}</td>
+  <td>${{ item.valor_neto_clp|floatformat:0 }}</td>
+  {% else %}
+        <td>${{ item.precio_unitario|floatformat:0 }}</td>
+        <td>${{ item.valor_neto_por_item|floatformat:0 }}</td>
+        {% endif %}
+      </tr>
+      {% empty %}
+      <tr><td colspan="9">No hay ítems registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+    </tfoot>
+  </table>
+
+  <table class="totales">
+    <tr><td><b>NETO</b></td><td class="right">${{ total_neto_edp|floatformat:0}}</td></tr>
+    <tr><td><b>IVA</b></td><td class="right">${{ total_con_iva_edp|floatformat:0}}</td></tr>
+    <tr><td><b>TOTAL</b></td><td class="right"><b>${{ total_general_edp|floatformat:0}}</b></td></tr>
+  </table>
+
+  <div style="margin-top: 2rem; text-align: center;">
+      <a href="{% url 'generar_pdf_edp' estado.id 'estado_pago_valentino' %}" 
+          class="btn no-print" 
+          style="padding: 0.5rem 1rem; background-color: #000000ff; color: white; text-decoration: none; border-radius: 0.3rem;">
+          Descargar PDF
+      </a>
+  </div>
+
+</body>
+</html>

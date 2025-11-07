@@ -1,0 +1,118 @@
+{% extends "clientes/base.html" %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="card login-card">
+        <h2 class="title text-center mb-4">
+            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+        </h2>
+
+        <form method="post" class="needs-validation">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger text-center" role="alert">
+                <i class="bi bi-exclamation-circle-fill"></i> Usuario y/o contraseña incorrectos.
+            </div>
+            {% endif %}
+
+            <div class="form-actions text-center mt-4">
+                <button type="submit" class="btn-glitch btn-glitch-primary">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Wrapper */
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50rem;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #111;
+}
+
+/* Card login */
+.card.login-card {
+    background-color: #111;
+    border: 0.125rem solid #fff;
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 31.25rem; /* 500px */
+    box-shadow: 0.25rem 0.25rem #fff;
+    color: #fff;
+}
+
+/* Título */
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+/* Inputs generados por Django */
+input, select, textarea {
+    background-color: #222;
+    color: #fff;
+    border: 0.0625rem solid #ccc;
+    border-radius: 0.3125rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+input:focus, select:focus, textarea:focus {
+    background-color: #333;
+    border-color: #fff;
+    box-shadow: none;
+    color: #fff;
+}
+
+/* Botones estilo glitch */
+.btn-glitch {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    margin: 0.2rem;
+    border-radius: 0.3125rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.btn-glitch-primary {
+    border: 0.125rem solid #fff;
+    color: #fff;
+    background-color: transparent;
+}
+
+.btn-glitch-primary:hover {
+    background-color: #fff;
+    color: #111;
+    box-shadow: 0.125rem 0.125rem #fff;
+}
+
+/* Errores de campo */
+.text-danger {
+    font-size: 0.875rem;
+    color: #f44336;
+}
+</style>
+{% endblock %}

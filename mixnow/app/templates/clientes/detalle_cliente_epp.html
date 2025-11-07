@@ -1,0 +1,381 @@
+{% extends 'clientes/base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="titulo">ESTADO DE PAGO PARA: {{ cliente.cliente }}</h1>
+
+    <!-- Sección: Agregar Ítem -->
+    <div class="card">
+        <div class="card-header">Agregar Ítem</div>
+        <div class="card-body">
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {{ form.guia.label_tag }}
+                    {{ form.guia }}
+                    {{ form.guia.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.fecha_item.label_tag }}
+                    {{ form.fecha_item }}
+                    {{ form.fecha_item.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.material.label_tag }}
+                    {{ form.material }}
+                    {{ form.material.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.cantidad.label_tag }}
+                    {{ form.cantidad }}
+                    {{ form.cantidad.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.unidad.label_tag }}
+                    {{ form.unidad }}
+                    {{ form.unidad.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.precio_unitario.label_tag }}
+                    {{ form.precio_unitario }}
+                    {{ form.precio_unitario.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.patente.label_tag }}
+                    {{ form.patente }}
+                    {{ form.patente.errors }}
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" name="accion_edp" value="agregar_item_edp" class="btn-agregar">Agregar Ítem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sección: Crear Estado de Pago -->
+    <div class="card">
+        <div class="card-header">Crear Estado de Pago</div>
+        <div class="card-body">
+            <form method="post" class="form-grid">
+                {% csrf_token %}
+                {{ estado_form.non_field_errors }}
+                <div class="form-group">
+                    {{ estado_form.fecha_emision.label_tag }}
+                    {{ estado_form.fecha_emision }}
+                    {{ estado_form.fecha_emision.errors }}
+                </div>
+                <div class="form-group">
+                    {{ estado_form.mes_servicio.label_tag }}
+                    {{ estado_form.mes_servicio }}
+                    {{ estado_form.mes_servicio.errors }}
+                </div>
+                <div class="form-group">
+                    {{ estado_form.tipo_servicio.label_tag }}
+                    {{ estado_form.tipo_servicio }}
+                    {{ estado_form.tipo_servicio.errors }}
+                </div>
+
+                <!-- CAMBIO AQUÍ: Select en lugar de radio buttons -->
+                <div class="form-group">
+                    <label for="opcion_destino_edp">Empresa:</label>
+                    <select name="opcion_destino_edp" id="opcion_destino_edp" required>
+                        <option value="">-- Selecciona una empresa --</option>
+                        <option value="empresa_aridos">Áridos</option>
+                        <option value="empresa_valentino">Valentino</option>
+                        <option value="empresa_inverland">Inverland</option>
+                        <option value="empresa_mixnow">Mixnow</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="usar_uf">Tipo de Conversion:</label>
+                    <select name="usar_uf" id="usar_uf" required>
+                        <option value="false">Solo Pesos Chilenos</option>
+                        <option value="true">UF a Pesos Chilenos</option>
+                    </select>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="submit" name="accion_crear_edp" value="crear_estado_de_pago" class="btn-crear">Crear Estado de Pago</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sección: Ítems agregados -->
+    <div class="card">
+        <div class="card-header">Ítems Agregados</div>
+        <div class="card-body">
+            {% if usar_uf and valor_uf_actual %}
+                <div class="alert alert-info">
+                    Valor UF actual: ${{ valor_uf_actual|floatformat:0 }}
+                </div>
+            {% endif %}
+            {% if items_temporales %}
+            <table class="tabla-items">
+                <thead>
+                    <tr>
+                        <th>Guía</th>
+                        <th>Fecha</th>
+                        <th>Material</th>
+                        <th>Cantidad</th>
+                        <th>Patente</th>
+                        <th>Unidad</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items_temporales %}
+                    <tr>
+                        <td>{{ item.guia }}</td>
+                        <td>{{ item.fecha_item }}</td>
+                        <td>{{ item.material }}</td>
+                        <td>{{ item.cantidad }}</td>
+                        <td>{{ item.patente }}</td>
+                        <td>{{ item.unidad }}</td>
+                        <td>${{ item.precio_unitario|floatformat:0 }}</td>
+                        <td>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="accion_eliminar" value="eliminar_item">
+                                <input type="hidden" name="itemindex" value="{{ forloop.counter0 }}">
+                                <button type="submit" class="btn-eliminar">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="no-items">No hay ítems agregados.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<style>
+/* =========================
+   ESTRUCTURA GENERAL
+========================= */
+.container {
+    max-width: 60rem; 
+    margin: 2rem auto;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+/* =========================
+   TÍTULOS
+========================= */
+.titulo {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* =========================
+   TARJETAS (CARDS)
+========================= */
+.card {
+    background-color: #1111;
+    border: 0.0625rem solid #fff;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    font-weight: bold;
+    padding: 1rem;
+    font-size: 1.25rem;
+    border-bottom: 0.0625rem solid #fff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+/* =========================
+   FORMULARIO
+========================= */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid #ffffff;
+    background-color: #00000011;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* =========================
+   BOTONES
+========================= */
+.form-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.btn-agregar {
+    border: 0.0625rem solid #27ae60;
+    background: transparent;
+    color: #27ae60;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-agregar:hover {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.btn-crear {
+    border: 0.0625rem solid #2980b9;
+    background: transparent;
+    color: #2980b9;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-crear:hover {
+    background-color: #2980b9;
+    color: #fff;
+}
+
+/* =========================
+   ALERTS
+========================= */
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 0.0625rem solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert-info {
+    color: #fff;
+    background-color: rgba(41, 128, 185, 0.2);
+    border-color: #2980b9;
+}
+
+/* =========================
+   TABLA DE ÍTEMS
+========================= */
+.tabla-items {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.tabla-items th,
+.tabla-items td {
+    border: 0.0625rem solid #fff;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+
+.tabla-items thead {
+    background-color: #1111;
+    color: #fff;
+}
+
+.tabla-items tbody tr:nth-child(even) {
+    background-color: #1111;
+}
+
+.no-items {
+    font-style: italic;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Botón eliminar */
+.btn-eliminar {
+    border: 0.0625rem solid #c0392b;
+    background-color: transparent;
+    color: #c0392b;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-eliminar:hover {
+    background-color: #c0392b;
+    color: #fff;
+}
+
+/* =========================
+   SELECT (LISTA DESPLEGABLE)
+========================= */
+.form-group select {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid #ffffff;
+    background-color: #1c1c1c; /* fondo oscuro */
+    color: #ffffff; /* texto blanco */
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    appearance: none; /* quita el estilo del navegador */
+    cursor: pointer;
+}
+
+/* Flecha personalizada */
+.form-group select::-ms-expand {
+    display: none; /* oculta flecha en Edge/IE */
+}
+
+/* Efecto al pasar el mouse */
+.form-group select:hover {
+    background-color: #2a2a2a;
+    border-color: #2980b9;
+}
+
+/* Efecto cuando está enfocado */
+.form-group select:focus {
+    outline: none;
+    border-color: #ffffffff;
+    background-color: #222222;
+}
+
+/* Opciones dentro del desplegable */
+.form-group select option {
+    background-color: #1c1c1c; /* color del fondo del menú */
+    color: #ffffff; /* color del texto */
+}
+</style>
+{% endblock %}

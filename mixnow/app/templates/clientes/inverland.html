@@ -1,0 +1,136 @@
+<div class="cotizacion-inverland" style="background: #fff; color: #111; font-family: 'Poppins', sans-serif; padding: 2rem; max-width: 900px; margin: 2rem auto; border-radius: 1rem; box-shadow: 0 0 1rem #ccc;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <img src="https://res.cloudinary.com/dbn15ujjz/image/upload/v1760025069/logoinverland_eohkc5.png" alt="Logo Aridos" style="width:10rem;">
+        <div style="text-align: right;">
+            <div style="font-weight: 700; font-size: 1.1rem;">INVERLAND</div>
+            <div style="color: #222; font-weight: 700;">constructora</div>
+            <div style="color: #222; font-weight: 700;">76.624.531-4</div>
+        </div>
+    </div>
+    <div style="margin-top: 1.5rem; text-align: right; font-size: 1rem;">Arica, {{ cotizacion.fecha|date:'d-m-Y' }}</div>
+    <h2 style="text-align: center; margin: 2rem 0 1rem 0; font-size: 1.3rem; font-weight: 700;">COTIZACIÓN DE SERVICIO N° {{ cotizacion.numero_cotizacion }}</h2>
+    <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">EMPRESA: {{ cliente.cliente|upper }}</div>
+    <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">CONTACTO: {{ cliente.persona_contacto }}</div>
+
+    {% if cliente.obra %}
+        <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">OBRA: {{ cliente.obra }}</div>
+    {% endif %}
+    <div style="margin-bottom: 1.5rem;">En atención a su solicitud adjuntamos la siguiente cotización</div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
+        <thead>
+            <tr style="background: #111; color: #fff;">
+                <th style="padding: 0.5rem; border: 1px solid #111;">ITEM</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">DESCRIPCIÓN</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">M3</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">P.U. (MONEDA)</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">SUBTOTAL</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">IVA</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ forloop.counter }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.descripcion }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.cantidad_m3 }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.precio_unitario|floatformat:0 }} {{ item.get_moneda_display }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.subtotal|floatformat:0 }} {{ item.get_moneda_display }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.iva|floatformat:0 }} {{ item.get_moneda_display }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.total|floatformat:0 }} {{ item.get_moneda_display }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="padding: 0.5rem; border: 1px solid #111; text-align:center;">No hay ítems agregados</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+                <!-- Totales generales en formato mini tabla -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem;">
+            <tr style="background: #f9f9f9; font-weight: 600; text-align: right;">
+                <td style="padding: 4px 8px; border: 1px solid #ddd; text-align: left;">Subtotal general</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">
+                    {{ cotizacion.subtotal_general|floatformat:0 }} {{ items.0.get_moneda_display }}
+                </td>
+            </tr>
+            <tr style="background: #f9f9f9; font-weight: 600; text-align: right;">
+                <td style="padding: 4px 8px; border: 1px solid #ddd; text-align: left;">IVA TOTAL</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">
+                    {{ cotizacion.iva_total|floatformat:0 }} {{ items.0.get_moneda_display }}
+                </td>
+            </tr>
+            <tr style="background: #efefef; font-weight: 700; text-align: right;">
+                <td style="padding: 4px 8px; border: 1px solid #ddd; text-align: left;">Total general</td>
+                <td style="padding: 4px 8px; border: 1px solid #ddd;">
+                    {{ cotizacion.total_general|floatformat:0 }} {{ items.0.get_moneda_display }}
+                </td>
+            </tr>
+        </table>
+
+
+    <div style="margin-bottom: 1.5rem;">
+        <ul style="margin-bottom: 0.5rem;">
+            <select id="equipos" name="equipos" style="padding: 0.3rem; border-radius: 0.3rem;">
+                <option value="32">1 MAQ 32 m³</option>
+                <option value="42">1 MAQ 42 m³</option>
+                <option value="46">1 MAQ 46 m³</option>
+            </select>
+            <li>✓ PRECIO + IVA</li>
+            <li>✓ Cualquier consulta no dude en comunicarse.</li>
+            <li>✓ VALIDO HASTA : {{ cotizacion.valido_hasta }}</li>
+            <li>✓ Pago al depósito en transferencia.</li>
+            <li>✓ Banco de Chile</li>
+            <li>✓ Banco BCI Cuenta Corriente: 61887838</li>
+            <li>✓ Rut: 76.624.531-K</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center;">
+        <div style="margin-top: 0.5rem; font-size: 1.1rem; font-weight: 700;">Valentino Venegas</div>
+        <br>
+        <div style="margin-bottom: 0.5rem;">G.O. Constructora Inverland SPA</div>
+        <div style="margin-bottom: 0.5rem;">CONSTRUCTORA INVERLAND SPA</div>
+        <div style="margin-bottom: 0.5rem;">GIRO: OBRAS EN CONSTRUCCIÓN</div>
+        <div style="margin-bottom: 0.5rem;">Rut: 76.624.531-K</div>
+        <hr style="margin-top: 2rem; border: none; border-top: 1px solid #111;">
+    </div>
+</div>
+
+<div style="margin-top: 2rem; text-align: center;">
+    <a href="{% url 'generar_pdf' cotizacion.id 'inverland' %}" 
+        class="btn no-print" 
+        style="padding: 0.5rem 1rem; background-color: #000000ff; color: white; text-decoration: none; border-radius: 0.3rem;">
+        Descargar PDF
+    </a>
+</div>
+
+<style>
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+input.fecha {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: inherit;
+    font-family: inherit;
+    width: 120px;
+}
+
+@media print {
+    input.fecha {
+        border: none;
+        background: transparent;
+    }
+}
+
+.cotizacion-inverland {
+  page-break-inside: avoid;
+}
+</style>

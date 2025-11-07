@@ -1,0 +1,191 @@
+{% extends "clientes/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="card-lista">
+        <h2 class="title">Lista de Camiones</h2>
+
+        <a href="{% url 'fechas_camiones' %}" class="btn btn-outline-secondary btn-full" style="margin-bottom: 1rem;">
+            <i class="bi bi-calendar"></i> Ver Fechas de Camiones
+        </a>
+
+        <input type="text" id="searchInput" class="search-bar" placeholder="Buscar camión...">
+
+        {% if camiones %}
+        <table class="table" id="clientesTable">
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Vehículo</th>
+                    <th>Patente</th>
+                    <th>Descripción</th>
+                    <th>Revisión Técnica</th>
+                    <th>Circulación</th>
+                    <th>Seguro</th>
+                    <th>Documentos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in camiones %}
+                <tr>
+                    <td>{{ c.empresa }}</td>
+                    <td>{{ c.vehiculo }}</td>
+                    <td>{{ c.patente }}</td>
+                    <td>{{ c.descripcion }}</td>
+                    <td>{{ c.revision_tecnica }}</td>
+                    <td>{{ c.circulacion }}</td>
+                    <td>{{ c.seguro }}</td>
+                    <td>
+                        {% if c.documentos.all.count > 0 %}
+                            <a href="{% url 'documentos_camion' camion_id=c.id %}" 
+                               class="btn btn-outline-secondary btn-sm btn-full">
+                                <i class="bi bi-folder"></i> Ver Documentos
+                            </a>
+                        {% else %}
+                            No hay documentos
+                        {% endif %}
+                    </td>
+                    <td class="acciones-td">
+                        <a href="{% url 'editar_camiones' c.id %}" 
+                           class="btn btn-edit btn-full">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a href="{% url 'eliminar_camiones' c.id %}" 
+                           class="btn btn-danger btn-full">
+                            Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">No hay camiones registrados</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* tu mismo CSS, sin cambios */
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #111;
+    min-height: 80vh;
+    max-width: 105rem;
+    margin: 0 auto;
+}
+.card-lista {
+    background-color: #111;
+    border: 0.125rem solid #fff;
+    border-radius: 0.625rem;
+    padding: 2rem;
+    box-shadow: 0.25rem 0.25rem #fff;
+    color: #fff;
+    max-width: 100rem;
+}
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+.table {
+    width: 100%;
+    min-width: 70rem;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 1.08rem;
+}
+.table th, .table td {
+    border: 0.0625rem solid #fff;
+    padding: 0.5rem 1rem;
+    text-align: left;
+}
+.table th {
+    font-weight: 600;
+}
+.btn {
+    padding: 0.5rem 1rem;
+    border: 0.125rem solid #fff;
+    border-radius: 0.5rem;
+    color: #fff;
+    background-color: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+.btn:hover {
+    background-color: #fff;
+    color: #111;
+    box-shadow: 0.125rem 0.125rem #fff;
+}
+.btn-danger {
+    border-color: #f44336;
+    color: #f44336;
+}
+.btn-danger:hover {
+    background-color: #f44336;
+    color: #fff;
+    box-shadow: 0.125rem 0.125rem #f44336;
+}
+.btn-full {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 0.70rem;
+}
+.acciones-td {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.no-data {
+    text-align: center;
+    padding: 1rem 0;
+    color: #aaa;
+}
+.search-bar {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    margin: 0 auto 1.5rem auto;
+    padding: 0.6rem 1.2rem;
+    border: 0.125rem solid #fff;
+    border-radius: 0.5rem;
+    background: #222;
+    color: #fff;
+    font-size: 1.08rem;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0.125rem 0.125rem #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.search-bar:focus {
+    outline: none;
+    border-color: #f44336;
+    box-shadow: 0.125rem 0.125rem #f44336;
+    background: #111;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('clientesTable');
+    searchInput.addEventListener('keyup', function() {
+        const filter = searchInput.value.toLowerCase();
+        for (const row of table.tBodies[0].rows) {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        }
+    });
+});
+</script>
+{% endblock %}
