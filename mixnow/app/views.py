@@ -258,8 +258,7 @@ class CotizacionMixNowAntofagastaView(DetailView):
         context['items'] = self.object.items.all()
         context['cliente'] = self.object.cliente
         return context
-
-
+    
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML, CSS
