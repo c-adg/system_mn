@@ -3,9 +3,9 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY =  'e8&*r$5p#l(7!b_+x2y3z@q1w4e5r6t7y8u9i0o1p2'
 
-DEBUG = False
+DEBUG = True
 
 # settings.py
 ALLOWED_HOSTS = ['168.232.167.56', '127.0.0.1', 'localhost']
