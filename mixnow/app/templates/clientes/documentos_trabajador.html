@@ -16,7 +16,7 @@
                         </a>
 
                         <!-- Formulario de eliminar documento -->
-                        <form method="post" action="{% url 'eliminar_documento' doc.id %}" class="delete-form" onsubmit="return confirm('¿Eliminar este documento?');">
+                        <form method="post" action="{% url 'eliminar_documento_trabajador' doc.id %}" class="delete-form" onsubmit="return confirm('¿Eliminar este documento?');">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">
                                 <i class="bi bi-trash"></i> Eliminar
