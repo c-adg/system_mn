@@ -76,8 +76,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+MEDIA_ROOT = Path('/home/ubuntu/system_mn/mixnow/media')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'inicio'
