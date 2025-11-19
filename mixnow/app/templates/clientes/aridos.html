@@ -24,6 +24,7 @@
         <thead>
             <tr style="background: #111; color: #fff;">
                 <th style="padding: 0.5rem; border: 1px solid #111;">ITEM</th>
+                <th style="padding: 0.5rem; border: 1px solid #111;">CONDICIONES</th>
                 <th style="padding: 0.5rem; border: 1px solid #111;">DESCRIPCION</th>
                 <th style="padding: 0.5rem; border: 1px solid #111;">M3</th>
                 <th style="padding: 0.5rem; border: 1px solid #111;">PU</th>
@@ -36,6 +37,7 @@
             {% for item in items %}
             <tr>
                 <td style="padding: 0.5rem; border: 1px solid #111;">{{ forloop.counter }}</td>
+                <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.condiciones }}</td>
                 <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.descripcion }}</td>
                 <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.cantidad_m3 }}</td>
                 <td style="padding: 0.5rem; border: 1px solid #111;">{{ item.precio_unitario|floatformat:0}} {{ item.get_moneda_display }}</td>
