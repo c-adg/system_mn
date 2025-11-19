@@ -175,6 +175,7 @@
     <!-- PRODUCTOS -->
     <table>
         <tr>
+            <th>Condiciones</th>
             <th>Servicio o producto</th>
             <th>M3</th>
             <th>Precio por M3</th>
@@ -184,6 +185,7 @@
         </tr>
         {% for item in cotizacion.items.all %}
         <tr>
+            <td>{{ item.condiciones }}</td>
             <td>{{ item.descripcion }}</td>
             <td>{{ item.cantidad_m3 }}</td>
             <td>{{ item.precio_unitario|floatformat:0 }} {{ item.moneda }}</td>

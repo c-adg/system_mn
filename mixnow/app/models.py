@@ -64,6 +64,7 @@ class Item(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True, blank=True) 
     cantidad_m3 = models.DecimalField(max_digits=10, decimal_places=2)
     descripcion = models.CharField(max_length=100, blank=False, null=False)
+    condiciones = models.CharField(max_length=100,null=False, blank=True)
 
     MONEDAS = (
         ('CLP', 'CLP'),

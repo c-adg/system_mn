@@ -19,6 +19,10 @@
                     {{ form.descripcion }}
                 </div>
                 <div class="form-group">
+                    {{ form.condiciones.label_tag }}
+                    {{ form.condiciones }}
+                </div>
+                <div class="form-group">
                     {{ form.moneda.label_tag }}
                     {{ form.moneda }}
                 </div>
@@ -81,6 +85,7 @@
                 <thead>
                     <tr>
                         <th>Descripción</th>
+                        <th>Condiciones</th>
                         <th>Cantidad (m³)</th>
                         <th>Precio Unitario</th>
                         <th>Moneda</th>
@@ -91,6 +96,7 @@
                     {% for item in items_temporales %}
                     <tr>
                         <td>{{ item.descripcion }}</td>
+                        <td>{{ item.condiciones }}</td>
                         <td>{{ item.cantidad_m3 }}</td>
                         <td>{{ item.precio_unitario |floatformat:0  }}</td>
                         <td>{{ item.moneda }}</td>

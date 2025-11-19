@@ -92,6 +92,7 @@ class Detalle_Clientes(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                     'descripcion': form.cleaned_data['descripcion'],
                     'moneda': form.cleaned_data['moneda'],
                     'precio_unitario': float(form.cleaned_data['precio_unitario']),
+                    'condiciones': form.cleaned_data['condiciones'],
                 }
                 # Guardamos el item en la sesión
                 request.session['items_temporales'].append(item_data)
@@ -157,7 +158,8 @@ class Detalle_Clientes(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                 cantidad_m3=i['cantidad_m3'],
                 descripcion=i['descripcion'],
                 moneda=i['moneda'],
-                precio_unitario=i['precio_unitario']
+                precio_unitario=i['precio_unitario'],
+                condiciones=i['condiciones']
             )
 
         # Limpiamos los ítems de la sesión ya que fueron creados en DB

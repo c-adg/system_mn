@@ -16,15 +16,16 @@ class ClienteForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['cantidad_m3', 'descripcion' , 'moneda', 'precio_unitario']
+        fields = ['cantidad_m3', 'descripcion' , 'moneda', 'precio_unitario','condiciones']
         labels = {
             'cantidad_m3': 'Cantidad (m³)',
         }
         widgets = {
             'cantidad_m3': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
-            'descripcion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Arena fina'}), 
+            'descripcion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: hormigon gn20'}), 
             'moneda': forms.Select(attrs={'class': 'form-control'}),
             'precio_unitario': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
+            'condiciones': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: retirar en planta '}), 
         }
 
 #Creamos un widget que sí permite múltiples archivos
