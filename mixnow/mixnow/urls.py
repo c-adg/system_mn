@@ -63,6 +63,9 @@ urlpatterns = [
 
     path('camiones/fechas/', views.Vencimiento_fechas_camiones.as_view(), name='fechas_camiones'),
 
+    path("historial/", views.HistorialListView.as_view(), name='historial'),
+
+
 ]
 
 #PARA PODER SUBIR ARCHIVOS MEDIA 

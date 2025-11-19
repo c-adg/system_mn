@@ -1,0 +1,53 @@
+{% extends "clientes/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Historial de Documentos</h2>
+
+    {% if historial %}
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Empresa</th>
+                    <th>Fecha</th>
+                    <th>Documento</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in historial %}
+                <tr>
+                    <td>
+                        {% if item.tipo == "cotizacion" %}
+                            <span class="badge bg-primary">Cotización</span>
+                        {% else %}
+                            <span class="badge bg-success">Estado de Pago</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ item.empresa }}</td>
+                    <td>{{ item.fecha|date:"d/m/Y H:i" }}</td>
+
+                    <td>
+                        <a href="{{ item.pdf_url }}" class="btn btn-sm btn-outline-dark" target="_blank">
+                            Ver PDF
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    {% else %}
+        <div class="alert alert-info">No hay documentos registrados en el historial.</div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

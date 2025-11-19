@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import ClienteForm, ItemForm , CamionesForm ,TrabajadoresForm , ItemeppForm , EstadosdePagoForm
-from .models import Cliente, Item, Cotizacion , Camiones , Documento , Empresas , Trabajadores , DocumentoTrabajador , EstadosdePago , Itemepp
+from .models import Cliente, Item, Cotizacion , Historial ,Camiones , Documento , Empresas , Trabajadores , DocumentoTrabajador , EstadosdePago , Itemepp 
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 import os
@@ -144,6 +144,15 @@ class Detalle_Clientes(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             messages.error(request, "Debes agregar al menos un ítem antes de crear la cotización.")
             return redirect('detalle_cliente', pk=self.object.pk)
 
+        # Redirigimos según la empresa seleccionada
+        rutas = {
+            "aridos": 'vista_aridos',
+            "valentino": 'vista_valentino',
+            "inverland": 'vista_inverland',
+            "mixnow": 'vista_mixnow',
+            "mixnow_antofagasta":"vista_mixnow_antofagasta"
+        }
+
         # Creamos la cotización en la base de datos
         cotizacion = Cotizacion.objects.create(
             cliente=self.object,
@@ -166,16 +175,15 @@ class Detalle_Clientes(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         request.session['items_temporales'] = []
         request.session.modified = True
 
-        # Redirigimos según la empresa seleccionada
-        rutas = {
-            "aridos": 'vista_aridos',
-            "valentino": 'vista_valentino',
-            "inverland": 'vista_inverland',
-            "mixnow": 'vista_mixnow',
-            "mixnow_antofagasta":"vista_mixnow_antofagasta"
-        }
-        return HttpResponseRedirect(reverse(rutas[opcion_destino], kwargs={'cotizacion_id': cotizacion.id}))
 
+        Historial.objects.create(
+            tipo="cotizacion",
+            cotizacion=cotizacion,
+            empresa=cotizacion.empresa,
+            pdf_url=reverse(rutas[opcion_destino], kwargs={'cotizacion_id': cotizacion.id})
+        )
+        return HttpResponseRedirect(reverse(rutas[opcion_destino], kwargs={'cotizacion_id': cotizacion.id}))
+    
 # PLANTILLAS DE LAS 4 EMPRESAS DIFERENTES
 
 # Aridos
@@ -753,6 +761,14 @@ class Detalle_Cliente_EDP(DetailView):
             }
             if opcion_destino_edp in rutas:
                 return redirect(rutas[opcion_destino_edp], estado_id=estado.id)
+            
+            # Crear historial correctamente
+            Historial.objects.create(
+                tipo="estado_pago",
+                estado_pago=estado,
+                empresa=estado.empresa,
+                pdf_url=reverse(rutas[opcion_destino_edp], kwargs={'estado_id': estado.id})
+            )
 
         # Si el formulario no es válido, renderizar con errores
         context = self.get_context_data()
@@ -871,3 +887,10 @@ def descargar_pdf_edp(request, estado_id, plantilla):
 
     return response
 
+
+#HISTORIAL DE COTIZACIONES Y EDP
+class HistorialListView(ListView):
+    model = Historial
+    template_name = "clientes/historial.html"
+    context_object_name = "historial"
+    ordering = ['-fecha']

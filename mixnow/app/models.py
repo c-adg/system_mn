@@ -252,6 +252,25 @@ class Itemepp(models.Model):
             total_clp = Decimal(str(self.precio_unitario)) * Decimal(str(self.cantidad))
             return total_clp / Decimal(str(self.estados_de_pago.valor_uf))
         return None
+    
+
+class Historial(models.Model):
+    TIPO_CHOICES = (
+        ("cotizacion", "Cotización"),
+        ("estado_pago", "Estado de Pago"),
+    )
+
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    cotizacion = models.ForeignKey(Cotizacion, null=True, blank=True, on_delete=models.CASCADE)
+    estado_pago = models.ForeignKey(EstadosdePago, null=True, blank=True, on_delete=models.CASCADE)
+    empresa = models.CharField(max_length=150)
+    fecha = models.DateTimeField(auto_now_add=True)
+    pdf_url = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.empresa} - {self.fecha}"
+
+
 #------------------------------------------------------------
     
     
