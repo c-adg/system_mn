@@ -1,19 +1,27 @@
 {% extends "clientes/base.html" %}
-
 {% load static %}
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="container mt-4 historial-container">
 
-    <h2 class="mb-4">Historial de Documentos</h2>
+    <h2 class="mb-4 text-center">Historial de Documentos</h2>
+
+    <div class="search-box mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar por cliente, empresa, tipo o RUT...">
+    </div>
 
     {% if historial %}
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+
+    <div class="table-responsive-wrapper">
+
+        <table class="table-custom" id="historialTabla">
+            <thead>
                 <tr>
                     <th>Tipo</th>
                     <th>Empresa</th>
+                    <th>RUT</th>
+                    <th>Cliente</th>
                     <th>Fecha</th>
                     <th>Documento</th>
                 </tr>
@@ -24,30 +32,190 @@
                 <tr>
                     <td>
                         {% if item.tipo == "cotizacion" %}
-                            <span class="badge bg-primary">Cotización</span>
+                            <span class="badge-custom badge-cot">Cotización</span>
                         {% else %}
-                            <span class="badge bg-success">Estado de Pago</span>
+                            <span class="badge-custom badge-edp">Estado de Pago</span>
                         {% endif %}
                     </td>
 
                     <td>{{ item.empresa }}</td>
-                    <td>{{ item.fecha|date:"d/m/Y H:i" }}</td>
 
                     <td>
-                        <a href="{{ item.pdf_url }}" class="btn btn-sm btn-outline-dark" target="_blank">
+                        {% if item.tipo == "cotizacion" %}
+                            {{ item.cotizacion.rut_cliente }}
+                        {% else %}
+                            {{ item.estado_pago.rut_cliente }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if item.tipo == "cotizacion" %}
+                            {{ item.cotizacion.cliente }}
+                        {% else %}
+                            {{ item.estado_pago.cliente }}
+                        {% endif %}
+                    </td>
+
+                    <td class="fecha-col">
+                        {{ item.fecha|date:"d/m/Y H:i" }}
+                    </td>
+
+                    <td>
+                        <a href="{{ item.pdf_url }}" target="_blank" class="btn-pdf">
+                            <i class="bi bi-file-earmark-pdf-fill"></i>
                             Ver PDF
                         </a>
                     </td>
+
                 </tr>
                 {% endfor %}
             </tbody>
-
         </table>
 
+    </div>
+
     {% else %}
-        <div class="alert alert-info">No hay documentos registrados en el historial.</div>
+
+        <div class="no-data">
+            No hay documentos registrados en el historial.
+        </div>
+
     {% endif %}
 
 </div>
+
+<style>
+
+.historial-container {
+  max-width: 68.75rem;
+  margin: 1.25rem auto;
+  padding: 0.75rem;
+}
+
+.table-responsive-wrapper {
+  margin-top: 2.5rem;
+}
+
+.search-box input {
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  border: 0.125rem solid #ffffff55;
+  background: #111;
+  color: #fff;
+}
+
+.search-box input::placeholder {
+  color: #cccccc;
+}
+
+.table-custom {
+  width: 100%;
+  border-collapse: collapse;
+  background: #000;
+  border-radius: 0.625rem;
+  overflow: hidden;
+  box-shadow: 0 0.125rem 0.5rem rgba(255, 255, 255, 0.15);
+}
+
+.table-custom thead th,
+.table-custom tbody td {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table-custom thead th {
+  background: #111;
+  color: #fff;
+  padding: 0.875rem;
+  text-transform: uppercase;
+  font-size: 0.8125rem;
+  letter-spacing: 0.031rem;
+}
+
+.table-custom tbody td {
+  padding: 0.75rem;
+  color: #fff !important;
+  font-size: 0.875rem;
+}
+
+.table-custom tbody tr:nth-child(even) {
+  background: #1a1a1a;
+}
+
+.table-custom tbody tr:hover {
+  background: #2b2b2b;
+}
+
+.badge-custom {
+  padding: 0.375rem 0.625rem;
+  border-radius: 50rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #fff;
+}
+
+.badge-cot {
+  background: #0d6efd;
+}
+
+.badge-edp {
+  background: #198754;
+}
+
+.btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.75rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: red;
+  border: 0.0625rem solid red;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.btn-pdf:hover {
+  background: #ffd4d4;
+  box-shadow: 0 0 0.625rem red;
+  transform: translateY(-0.125rem);
+  color: #a50000;
+}
+
+.fecha-col {
+  font-weight: 600;
+  color: #f1f1f1;
+}
+
+.no-data {
+  text-align: center;
+  padding: 1.5625rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  color: #444;
+}
+
+@media (max-width: 53.75rem) {
+  .table-responsive-wrapper {
+    overflow-x: auto;
+  }
+}
+
+</style>
+
+<script>
+document.getElementById("searchInput").addEventListener("keyup", function () {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#historialTabla tbody tr");
+
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
+    });
+});
+</script>
 
 {% endblock %}
