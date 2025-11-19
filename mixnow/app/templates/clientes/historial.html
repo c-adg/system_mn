@@ -20,7 +20,6 @@
                 <tr>
                     <th>Tipo</th>
                     <th>Empresa</th>
-                    <th>RUT</th>
                     <th>Cliente</th>
                     <th>Fecha</th>
                     <th>Documento</th>
@@ -39,14 +38,6 @@
                     </td>
 
                     <td>{{ item.empresa }}</td>
-
-                    <td>
-                        {% if item.tipo == "cotizacion" %}
-                            {{ item.cotizacion.rut_cliente }}
-                        {% else %}
-                            {{ item.estado_pago.rut_cliente }}
-                        {% endif %}
-                    </td>
 
                     <td>
                         {% if item.tipo == "cotizacion" %}
