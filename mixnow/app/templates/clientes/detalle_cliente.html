@@ -1,5 +1,6 @@
 {% extends 'clientes/base.html' %}
 {% block content %}
+{% load clp_filter %}
 <div class="container">
     <h1 class="titulo">COTIZACIÓN PARA: {{ cliente.cliente }}</h1>
 
@@ -98,7 +99,7 @@
                         <td>{{ item.descripcion }}</td>
                         <td>{{ item.condiciones }}</td>
                         <td>{{ item.cantidad_m3 }}</td>
-                        <td>{{ item.precio_unitario |floatformat:0  }}</td>
+                        <td>{{ item.precio_unitario |clp  }}</td>
                         <td>{{ item.moneda }}</td>
                         <td>
                             <form method="post" style="display:inline;">
