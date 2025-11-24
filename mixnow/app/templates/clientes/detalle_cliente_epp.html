@@ -109,7 +109,7 @@
         <div class="card-body">
             {% if usar_uf and valor_uf_actual %}
                 <div class="alert alert-info">
-                    Valor UF actual: ${{ valor_uf_actual|floatformat:0 }}
+                    Valor UF actual: ${{ valor_uf_actual|clp }}
                 </div>
             {% endif %}
             {% if items_temporales %}

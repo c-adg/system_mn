@@ -60,6 +60,7 @@
   </style>
 </head>
 <body>
+{% load clp_filter %}
 
   <!-- Contenedor del título centrado -->
   <div style="text-align: center; margin-bottom: 20px;">
@@ -82,7 +83,7 @@
     <tr><td><b>OBRA :</b> {{ cliente.obra }}</td></tr>
     <tr><td><b>TIPO DE SERVICIO:</b> {{ estado.tipo_servicio }}</td></tr>
     {% if estado.usar_uf %}
-    <tr><td><b>VALOR UF:</b> ${{ estado.valor_uf|floatformat:0 }}</td></tr>
+    <tr><td><b>VALOR UF:</b> ${{ estado.valor_uf|clp }}</td></tr>
     {% endif %}
   </table>
 
@@ -115,13 +116,13 @@
         <td>{{ item.material }}</td>
         <td>{{ item.cantidad }}</td>
         <td>{{ item.unidad }}</td>
-  {% if estado.usar_uf %}
-  <td>{{ item.valor_en_uf|floatformat:2 }}</td>
-  <td>${{ item.valor_neto_clp|floatformat:0 }}</td>
-  {% else %}
-        <td>${{ item.precio_unitario|floatformat:0 }}</td>
-        <td>${{ item.valor_neto_por_item|floatformat:0 }}</td>
-        {% endif %}
+    {% if estado.usar_uf %}
+    <td>{{ item.valor_en_uf|floatformat:2 }}</td>
+    <td>${{ item.valor_neto_clp|clp }}</td>
+    {% else %}
+      <td>${{ item.precio_unitario|clp }}</td>
+      <td>${{ item.valor_neto_por_item|clp }}</td>
+      {% endif %}
       </tr>
       {% empty %}
       <tr><td colspan="9">No hay ítems registrados.</td></tr>
@@ -132,9 +133,9 @@
   </table>
 
   <table class="totales">
-    <tr><td><b>NETO</b></td><td class="right">${{ total_neto_edp|floatformat:0}}</td></tr>
-    <tr><td><b>IVA</b></td><td class="right">${{ total_con_iva_edp|floatformat:0}}</td></tr>
-    <tr><td><b>TOTAL</b></td><td class="right"><b>${{ total_general_edp|floatformat:0}}</b></td></tr>
+    <tr><td><b>NETO</b></td><td class="right">${{ total_neto_edp|clp}}</td></tr>
+    <tr><td><b>IVA</b></td><td class="right">${{ total_con_iva_edp|clp}}</td></tr>
+    <tr><td><b>TOTAL</b></td><td class="right"><b>${{ total_general_edp|clp}}</b></td></tr>
   </table>
 
   <div style="margin-top: 2rem; text-align: center;">

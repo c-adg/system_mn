@@ -1,3 +1,4 @@
+{% load clp_filter %}
 <style>
     @page { size: A4; margin: 1cm; }
 
@@ -188,19 +189,19 @@
             <td>{{ item.condiciones }}</td>
             <td>{{ item.descripcion }}</td>
             <td>{{ item.cantidad_m3 }}</td>
-            <td>{{ item.precio_unitario|floatformat:0 }} {{ item.moneda }}</td>
-            <td>{{ item.subtotal|floatformat:0 }}</td>
-            <td>{{ item.iva|floatformat:0 }}</td>
-            <td>{{ item.total|floatformat:0 }}</td>
+            <td>{{ item.precio_unitario|clp }} {{ item.get_moneda_display }}</td>
+            <td>{{ item.subtotal|clp }}</td>
+            <td>{{ item.iva|clp }}</td>
+            <td>{{ item.total|clp }}</td>
         </tr>
         {% endfor %}
     </table>
 
     <!-- TOTALES -->
     <table class="totales">
-        <tr><td>Subtotal general</td><td>{{ cotizacion.subtotal_general|floatformat:0 }} {{ items.0.get_moneda_display }}</td></tr>
-        <tr><td>IVA TOTAL</td><td>{{ cotizacion.iva_total|floatformat:0 }} {{ items.0.get_moneda_display }}</td></tr>
-        <tr><td>Total general</td><td>{{ cotizacion.total_general|floatformat:0 }} {{ items.0.get_moneda_display }}</td></tr>
+        <tr><td>Subtotal general</td><td>{{ cotizacion.subtotal_general|clp }} {{ items.0.get_moneda_display }}</td></tr>
+        <tr><td>IVA TOTAL</td><td>{{ cotizacion.iva_total|clp }} {{ items.0.get_moneda_display }}</td></tr>
+        <tr><td>Total general</td><td>{{ cotizacion.total_general|clp }} {{ items.0.get_moneda_display }}</td></tr>
     </table>
 
     <!-- OBSERVACIONES -->

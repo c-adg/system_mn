@@ -15,6 +15,7 @@ from django.utils import timezone
 import requests
 from django.http import JsonResponse
 from django.core.cache import cache
+from decimal import Decimal, InvalidOperation, ROUND_DOWN
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -59,6 +60,35 @@ class Eliminar_Cliente(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = "clientes/eliminar_cliente.html"
     success_url = reverse_lazy('listar_clientes')
 
+#FUNCION PARA LIMPIAR A CLP PESOS CHILENOS
+def limpiar_clp(valor):
+    """Convierte formatos chilenos a Decimal.
+
+    Ejemplos:
+    - '15.000' -> Decimal('15000')
+    - '1.200.000,50' -> Decimal('1200000.50')
+    - 15000 -> Decimal('15000')
+    """
+    try:
+        s = str(valor).strip()
+        if s == '':
+            return Decimal('0')
+        # eliminar espacios
+        s = s.replace(' ', '')
+        # Si contiene ambos separadores: punto miles y coma decimales
+        if ',' in s and '.' in s:
+            s = s.replace('.', '').replace(',', '.')
+        else:
+            # Si sólo tiene puntos (ej. '10.000'), asumir miles y eliminar
+            if '.' in s and ',' not in s:
+                s = s.replace('.', '')
+            # Si sólo tiene coma (ej. '10000,50'), reemplazar por punto decimal
+            if ',' in s and '.' not in s:
+                s = s.replace(',', '.')
+        return Decimal(s)
+    except (InvalidOperation, Exception):
+        return valor
+
 # ======================================
 # VISTA DETALLE CLIENTE - AGREGAR ITEMS
 # ======================================
@@ -87,11 +117,25 @@ class Detalle_Clientes(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         if accion == 'agregar_item':
             form = ItemForm(request.POST)
             if form.is_valid():
+                # preparar cantidad (guardamos como string para serializar en sesión)
+                cantidad = form.cleaned_data['cantidad_m3']
+                try:
+                    cantidad_s = str(Decimal(str(cantidad)))
+                except Exception:
+                    cantidad_s = str(cantidad)
+
+                moneda = form.cleaned_data['moneda']
+                # preparar precio según moneda
+                if moneda == 'CLP':
+                    precio = limpiar_clp(form.cleaned_data['precio_unitario'])
+                else:
+                    precio = Decimal(str(form.cleaned_data['precio_unitario']))
+
                 item_data = {
-                    'cantidad_m3': float(form.cleaned_data['cantidad_m3']),
+                    'cantidad_m3': cantidad_s,
                     'descripcion': form.cleaned_data['descripcion'],
-                    'moneda': form.cleaned_data['moneda'],
-                    'precio_unitario': float(form.cleaned_data['precio_unitario']),
+                    'moneda': moneda,
+                    'precio_unitario': str(precio),
                     'condiciones': form.cleaned_data['condiciones'],
                 }
                 # Guardamos el item en la sesión
@@ -162,13 +206,23 @@ class Detalle_Clientes(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # Creamos los ítems asociados a la cotización
         for i in request.session['items_temporales']:
+            # Convertir valores serializados en sesión a Decimal donde corresponda
+            try:
+                cantidad_m3 = Decimal(str(i.get('cantidad_m3', '0')))
+            except Exception:
+                cantidad_m3 = Decimal('0')
+            try:
+                precio_unitario = Decimal(str(i.get('precio_unitario', '0')))
+            except Exception:
+                precio_unitario = Decimal('0')
+
             Item.objects.create(
                 cotizacion=cotizacion,
-                cantidad_m3=i['cantidad_m3'],
-                descripcion=i['descripcion'],
-                moneda=i['moneda'],
-                precio_unitario=i['precio_unitario'],
-                condiciones=i['condiciones']
+                cantidad_m3=cantidad_m3,
+                descripcion=i.get('descripcion', ''),
+                moneda=i.get('moneda', 'CLP'),
+                precio_unitario=precio_unitario,
+                condiciones=i.get('condiciones', '')
             )
 
         # Limpiamos los ítems de la sesión ya que fueron creados en DB
@@ -624,14 +678,27 @@ class Detalle_Cliente_EDP(DetailView):
         if accion_edp == 'agregar_item_edp':
             form = ItemeppForm(request.POST)
             if form.is_valid():
+                cantidad = form.cleaned_data['cantidad']
+                try:
+                    cantidad_s = str(Decimal(str(cantidad)))
+                except Exception:
+                    cantidad_s = str(cantidad)
+
+                # decidir si el precio ingresado es UF o CLP segun la sesión
+                usar_uf = request.session.get('usar_uf', False)
+                if usar_uf:
+                    precio = Decimal(str(form.cleaned_data['precio_unitario']))
+                else:
+                    precio = limpiar_clp(form.cleaned_data['precio_unitario'])
+
                 item_data = {
                     'fecha_item': str(form.cleaned_data['fecha_item']),
                     'guia': form.cleaned_data['guia'],
                     'material': form.cleaned_data['material'],
-                    'cantidad': float(form.cleaned_data['cantidad']),
+                    'cantidad': cantidad_s,
                     'patente': form.cleaned_data['patente'],
                     'unidad': form.cleaned_data['unidad'],
-                    'precio_unitario': float(form.cleaned_data['precio_unitario']),
+                    'precio_unitario': str(precio),
                 }
                 request.session['items_temporales_epp'].append(item_data)
                 request.session.modified = True
@@ -670,13 +737,24 @@ class Detalle_Cliente_EDP(DetailView):
                 items_con_uf = []
                 for item in context['items_temporales']:
                     item_copy = item.copy()
-                    precio = float(item['precio_unitario'])
-                    cantidad = float(item.get('cantidad', item.get('cantidad_m3', 0)))
+                    try:
+                        precio = Decimal(str(item['precio_unitario']))
+                    except Exception:
+                        try:
+                            precio = Decimal(str(float(item['precio_unitario'])))
+                        except Exception:
+                            precio = Decimal('0')
+                    try:
+                        cantidad = Decimal(str(item.get('cantidad', item.get('cantidad_m3', '0'))))
+                    except Exception:
+                        cantidad = Decimal('0')
                     try:
                         # En modo UF, el precio ingresado es en UF
                         item_copy['valor_uf'] = precio  # Mantener el precio en UF como se ingresó
-                        # El valor neto en CLP ya viene calculado
-                        item_copy['valor_neto_clp'] = item.get('valor_neto_clp', int(precio * cantidad * float(valor_uf)))
+                        # Calcular el valor neto en CLP: precio(UF) * cantidad * valor_uf
+                        valor_uf_d = Decimal(str(valor_uf))
+                        valor_neto_clp = (precio * cantidad * valor_uf_d).quantize(Decimal('1'), rounding=ROUND_DOWN)
+                        item_copy['valor_neto_clp'] = int(valor_neto_clp)
                     except Exception as e:
                         print(f"Error al procesar item: {e}")
                         item_copy['valor_uf'] = None
@@ -735,13 +813,23 @@ class Detalle_Cliente_EDP(DetailView):
 
             # Crear los ítems asociados desde la sesión
             for i in request.session['items_temporales_epp']:
-                precio_unitario = float(i['precio_unitario'])
+                try:
+                    precio_unitario = Decimal(str(i.get('precio_unitario', '0')))
+                except Exception:
+                    try:
+                        precio_unitario = Decimal(str(float(i.get('precio_unitario', 0))))
+                    except Exception:
+                        precio_unitario = Decimal('0')
+                try:
+                    cantidad_item = Decimal(str(i.get('cantidad', '0')))
+                except Exception:
+                    cantidad_item = Decimal('0')
                 Itemepp.objects.create(
                     estados_de_pago=estado,
                     fecha_item=i['fecha_item'],
                     guia=i['guia'],
                     material=i['material'],
-                    cantidad=i['cantidad'],
+                    cantidad=cantidad_item,
                     patente=i['patente'],
                     unidad=i['unidad'],
                     precio_unitario=precio_unitario
