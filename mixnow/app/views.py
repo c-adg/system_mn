@@ -665,6 +665,7 @@ class Detalle_Cliente_EDP(DetailView):
         accion_edp = request.POST.get('accion_edp')
         accion_crear_edp = request.POST.get('accion_crear_edp')
         accion_eliminar = request.POST.get('accion_eliminar')
+        accion_editar = request.POST.get('accion_editar')
 
         # Inicializar sesión
         if 'items_temporales_epp' not in request.session:
@@ -702,6 +703,38 @@ class Detalle_Cliente_EDP(DetailView):
                 }
                 request.session['items_temporales_epp'].append(item_data)
                 request.session.modified = True
+            return redirect('detalle_cliente_epp', pk=self.object.pk)
+
+        # ===== Editar ítem temporal =====
+        elif accion_editar == 'editar_item':
+            index = int(request.POST.get('itemindex'))
+            if 0 <= index < len(request.session['items_temporales_epp']):
+                form = ItemeppForm(request.POST)
+                if form.is_valid():
+                    cantidad = form.cleaned_data['cantidad']
+                    try:
+                        cantidad_s = str(Decimal(str(cantidad)))
+                    except Exception:
+                        cantidad_s = str(cantidad)
+
+                    # decidir si el precio ingresado es UF o CLP segun la sesión
+                    usar_uf = request.session.get('usar_uf', False)
+                    if usar_uf:
+                        precio = Decimal(str(form.cleaned_data['precio_unitario']))
+                    else:
+                        precio = limpiar_clp(form.cleaned_data['precio_unitario'])
+
+                    # Actualizar el item en lugar de crear uno nuevo
+                    request.session['items_temporales_epp'][index] = {
+                        'fecha_item': str(form.cleaned_data['fecha_item']),
+                        'guia': form.cleaned_data['guia'],
+                        'material': form.cleaned_data['material'],
+                        'cantidad': cantidad_s,
+                        'patente': form.cleaned_data['patente'],
+                        'unidad': form.cleaned_data['unidad'],
+                        'precio_unitario': str(precio),
+                    }
+                    request.session.modified = True
             return redirect('detalle_cliente_epp', pk=self.object.pk)
 
         # ===== Eliminar ítem temporal =====

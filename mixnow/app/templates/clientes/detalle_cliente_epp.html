@@ -137,6 +137,7 @@
                         <td>{{ item.unidad }}</td>
                         <td>${{ item.precio_unitario|clp }}</td>
                         <td>
+                            <button type="button" class="btn-editar" onclick="abrirModalEditar({{ forloop.counter0 }}, '{{ item.guia }}', '{{ item.fecha_item }}', '{{ item.material }}', '{{ item.cantidad }}', '{{ item.patente }}', '{{ item.unidad }}', '{{ item.precio_unitario }}')">Editar</button>
                             <form method="post" style="display:inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="accion_eliminar" value="eliminar_item">
@@ -155,6 +156,84 @@
     </div>
 
 </div>
+
+<!-- Modal para editar item -->
+<div id="modalEditar" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Editar Ítem</h2>
+            <button class="close" onclick="cerrarModalEditar()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form method="post" id="formEditarItem" class="form-grid">
+                {% csrf_token %}
+                <input type="hidden" name="accion_editar" value="editar_item">
+                <input type="hidden" id="itemindex" name="itemindex" value="">
+                
+                <div class="form-group">
+                    <label for="edit_guia">Guía:</label>
+                    <input type="number" id="edit_guia" name="guia" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_fecha_item">Fecha:</label>
+                    <input type="date" id="edit_fecha_item" name="fecha_item" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_material">Material:</label>
+                    <input type="text" id="edit_material" name="material" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_cantidad">Cantidad:</label>
+                    <input type="number" id="edit_cantidad" name="cantidad" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_unidad">Unidad:</label>
+                    <input type="text" id="edit_unidad" name="unidad" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_precio_unitario">Precio Unitario:</label>
+                    <input type="text" id="edit_precio_unitario" name="precio_unitario" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_patente">Patente:</label>
+                    <input type="text" id="edit_patente" name="patente" required>
+                </div>
+                
+                <div class="form-buttons" style="grid-column: 1 / -1;">
+                    <button type="submit" class="btn-guardar">Guardar Cambios</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarModalEditar()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirModalEditar(index, guia, fecha, material, cantidad, patente, unidad, precio) {
+    document.getElementById('itemindex').value = index;
+    document.getElementById('edit_guia').value = guia;
+    document.getElementById('edit_fecha_item').value = fecha;
+    document.getElementById('edit_material').value = material;
+    document.getElementById('edit_cantidad').value = cantidad;
+    document.getElementById('edit_patente').value = patente;
+    document.getElementById('edit_unidad').value = unidad;
+    document.getElementById('edit_precio_unitario').value = precio;
+    
+    document.getElementById('modalEditar').style.display = 'block';
+}
+
+function cerrarModalEditar() {
+    document.getElementById('modalEditar').style.display = 'none';
+}
+
+// Cerrar modal al hacer click fuera de él
+window.onclick = function(event) {
+    const modal = document.getElementById('modalEditar');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
 
 <style>
 /* =========================
@@ -377,6 +456,120 @@
 .form-group select option {
     background-color: #1c1c1c; /* color del fondo del menú */
     color: #ffffff; /* color del texto */
+}
+
+/* =========================
+   MODAL PARA EDITAR
+========================= */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #1111;
+    margin: 5% auto;
+    padding: 0;
+    border: 0.0625rem solid #fff;
+    border-radius: 0.5rem;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.8);
+}
+
+.modal-header {
+    padding: 1rem;
+    border-bottom: 0.0625rem solid #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0a0a0a;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+}
+
+.close {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: bold;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.close:hover,
+.close:focus {
+    color: #e74c3c;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.btn-guardar {
+    border: 0.0625rem solid #27ae60;
+    background: transparent;
+    color: #27ae60;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+}
+
+.btn-guardar:hover {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.btn-cancelar {
+    border: 0.0625rem solid #95a5a6;
+    background: transparent;
+    color: #95a5a6;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+}
+
+.btn-cancelar:hover {
+    background-color: #95a5a6;
+    color: #fff;
+}
+
+.btn-editar {
+    border: 0.0625rem solid #f39c12;
+    background-color: transparent;
+    color: #f39c12;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: 0.2s;
+    font-family: 'Poppins', sans-serif;
+    margin-right: 0.25rem;
+}
+
+.btn-editar:hover {
+    background-color: #f39c12;
+    color: #fff;
 }
 </style>
 {% endblock %}
